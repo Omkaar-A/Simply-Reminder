@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://apis.google.com/js/api.js" async defer></script>
 </head>
@@ -15,53 +15,44 @@
   <div id="confetti-container"></div>
 
   <div class="app">
+    <!-- Header -->
     <header class="header">
       <div class="header-top">
-        <h1>✨ Simply Reminder</h1>
+        <div>
+          <p class="greeting" id="greeting">Good morning</p>
+          <h1>Simply Reminder</h1>
+        </div>
         <div class="header-actions">
-          <button type="button" class="btn-dark-mode" id="darkModeToggle" title="Toggle dark mode">🌙</button>
-        </div>
-      </div>
-      <p class="tagline">Keep track of what matters</p>
-
-      <!-- Google Account -->
-      <div class="google-bar" id="googleBar">
-        <div id="googleSignedOut">
-          <button type="button" class="btn-google" id="googleSignInBtn">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" width="18" height="18">
-            Sign in with Google
-          </button>
-          <span class="google-hint">Link your Google Calendar</span>
-        </div>
-        <div id="googleSignedIn" class="hidden">
-          <div class="google-user">
-            <img id="googleAvatar" class="google-avatar" src="" alt="" />
-            <span id="googleName"></span>
-            <span class="google-sync-badge">📅 Calendar linked</span>
-          </div>
-          <button type="button" class="btn-google-out" id="googleSignOutBtn">Sign out</button>
+          <button type="button" class="btn-icon" id="darkModeToggle" title="Toggle dark mode">🌙</button>
         </div>
       </div>
     </header>
 
-    <!-- Stats Bar -->
-    <div class="stats-bar" id="statsBar">
-      <div class="stat">
-        <span class="stat-number" id="statTotal">0</span>
-        <span class="stat-label">Total</span>
+    <!-- Google Account -->
+    <div class="glass-card google-bar" id="googleBar">
+      <div id="googleSignedOut">
+        <button type="button" class="btn-google" id="googleSignInBtn">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" width="18" height="18">
+          Sign in with Google
+        </button>
+        <span class="google-hint">Link your Google Calendar</span>
       </div>
-      <div class="stat">
-        <span class="stat-number" id="statActive">0</span>
-        <span class="stat-label">Active</span>
+      <div id="googleSignedIn" class="hidden">
+        <div class="google-user">
+          <img id="googleAvatar" class="google-avatar" src="" alt="" />
+          <span id="googleName"></span>
+          <span class="google-sync-badge">📅 Linked</span>
+        </div>
+        <button type="button" class="btn-text-muted" id="googleSignOutBtn">Sign out</button>
       </div>
-      <div class="stat">
-        <span class="stat-number" id="statDone">0</span>
-        <span class="stat-label">Done</span>
-      </div>
-      <div class="stat">
-        <span class="stat-number" id="statPercent">0%</span>
-        <span class="stat-label">Progress</span>
-      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="glass-card stat"><span class="stat-number" id="statTotal">0</span><span class="stat-label">Total</span></div>
+      <div class="glass-card stat"><span class="stat-number" id="statActive">0</span><span class="stat-label">Active</span></div>
+      <div class="glass-card stat"><span class="stat-number" id="statDone">0</span><span class="stat-label">Done</span></div>
+      <div class="glass-card stat"><span class="stat-number" id="statPercent">0%</span><span class="stat-label">Progress</span></div>
     </div>
 
     <!-- Progress Bar -->
@@ -69,55 +60,57 @@
       <div class="progress-bar" id="progressBar"></div>
     </div>
 
-    <!-- Search -->
-    <div class="search-box">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search reminders..." autocomplete="off" />
+    <!-- Add Form -->
+    <div class="glass-card add-card">
+      <form id="addForm">
+        <input type="text" id="reminderInput" placeholder="What do you need to remember?" autocomplete="off" maxlength="200" />
+        <textarea id="noteInput" placeholder="Add a note (optional)" rows="2" maxlength="500"></textarea>
+        <div class="form-row">
+          <input type="date" id="dueDate" title="Due date" />
+          <div class="category-picker" id="categoryPicker">
+            <button type="button" class="cat-btn" data-cat="📚" title="School">📚</button>
+            <button type="button" class="cat-btn" data-cat="🏠" title="Home">🏠</button>
+            <button type="button" class="cat-btn" data-cat="🎮" title="Fun">🎮</button>
+            <button type="button" class="cat-btn" data-cat="🏃" title="Sports">🏃</button>
+            <button type="button" class="cat-btn" data-cat="🎵" title="Music">🎵</button>
+            <button type="button" class="cat-btn" data-cat="⭐" title="Important">⭐</button>
+          </div>
+          <select id="prioritySelect" title="Priority">
+            <option value="normal">⚪ Normal</option>
+            <option value="low">🟢 Low</option>
+            <option value="high">🔴 High</option>
+          </select>
+          <button type="submit" class="btn-primary">Add</button>
+        </div>
+      </form>
     </div>
 
-    <!-- Add Form -->
-    <form class="add-form" id="addForm">
-      <input
-        type="text"
-        id="reminderInput"
-        placeholder="What do you need to remember?"
-        autocomplete="off"
-        maxlength="200"
-      />
-      <div class="form-row">
-        <input type="date" id="dueDate" title="Due date (optional)" />
-        <div class="category-picker" id="categoryPicker">
-          <button type="button" class="category-btn" data-cat="📚" title="School">📚</button>
-          <button type="button" class="category-btn" data-cat="🏠" title="Home">🏠</button>
-          <button type="button" class="category-btn" data-cat="🎮" title="Fun">🎮</button>
-          <button type="button" class="category-btn" data-cat="🏃" title="Sports">🏃</button>
-          <button type="button" class="category-btn" data-cat="🎵" title="Music">🎵</button>
-          <button type="button" class="category-btn" data-cat="⭐" title="Important">⭐</button>
-        </div>
-        <select id="prioritySelect" title="Priority">
-          <option value="normal">Normal</option>
-          <option value="low">🟢 Low</option>
-          <option value="high">🔴 High</option>
-        </select>
-        <button type="submit" class="btn-add" aria-label="Add reminder">Add ✨</button>
+    <!-- Search + Filters -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg class="search-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search..." autocomplete="off" />
       </div>
-    </form>
-
-    <!-- Filters -->
-    <div class="filters">
-      <button type="button" class="filter-btn active" data-filter="all">🌈 All</button>
-      <button type="button" class="filter-btn" data-filter="active">⚡ Active</button>
-      <button type="button" class="filter-btn" data-filter="done">✅ Done</button>
-      <button type="button" class="filter-btn" data-filter="high">🔴 High</button>
+      <div class="filters">
+        <button type="button" class="filter-btn active" data-filter="all">All</button>
+        <button type="button" class="filter-btn" data-filter="active">Active</button>
+        <button type="button" class="filter-btn" data-filter="done">Done</button>
+        <button type="button" class="filter-btn" data-filter="high">High</button>
+      </div>
     </div>
 
     <!-- Reminder List -->
     <ul class="reminder-list" id="reminderList"></ul>
 
-    <p class="empty-state" id="emptyState">No reminders yet. Add one above! ✨</p>
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">📝</div>
+      <p class="empty-title">No reminders yet</p>
+      <p class="empty-sub">Add your first one above!</p>
+    </div>
 
-    <!-- Clear Done Button -->
-    <button type="button" class="btn-clear-done hidden" id="clearDoneBtn">🗑️ Clear all done</button>
+    <!-- Clear Done -->
+    <button type="button" class="btn-clear-done hidden" id="clearDoneBtn">🗑️ Clear completed</button>
   </div>
 
   <script src="app.js"></script>

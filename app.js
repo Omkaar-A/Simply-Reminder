@@ -10,6 +10,7 @@ const DARK_KEY = 'reminders-dark';
 /* ===== DOM ===== */
 const form = document.getElementById('addForm');
 const input = document.getElementById('reminderInput');
+const noteInput = document.getElementById('noteInput');
 const dueDateInput = document.getElementById('dueDate');
 const listEl = document.getElementById('reminderList');
 const emptyState = document.getElementById('emptyState');
@@ -17,8 +18,9 @@ const filterBtns = document.querySelectorAll('.filter-btn');
 const searchInput = document.getElementById('searchInput');
 const darkModeToggle = document.getElementById('darkModeToggle');
 const prioritySelect = document.getElementById('prioritySelect');
-const categoryBtns = document.querySelectorAll('.category-btn');
+const categoryBtns = document.querySelectorAll('.cat-btn');
 const clearDoneBtn = document.getElementById('clearDoneBtn');
+const greetingEl = document.getElementById('greeting');
 const progressBar = document.getElementById('progressBar');
 const statTotal = document.getElementById('statTotal');
 const statActive = document.getElementById('statActive');
@@ -50,6 +52,16 @@ function loadReminders() {
 
 function saveReminders() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(reminders));
+}
+
+/* ===== GREETING ===== */
+function updateGreeting() {
+  const h = new Date().getHours();
+  let msg = 'Good evening 🌙';
+  if (h < 5) msg = 'Up late? 🌟';
+  else if (h < 12) msg = 'Good morning ☀️';
+  else if (h < 17) msg = 'Good afternoon 🌤️';
+  greetingEl.textContent = msg;
 }
 
 /* ===== DARK MODE ===== */
@@ -263,24 +275,24 @@ function render() {
     const calUrl = getGoogleCalendarUrl(reminder);
 
     li.innerHTML = `
-      <input type="checkbox" class="reminder-checkbox" ${reminder.done ? 'checked' : ''}
-        aria-label="Mark as ${reminder.done ? 'active' : 'done'}" />
+      <div class="custom-check${reminder.done ? ' checked' : ''}" role="checkbox" aria-checked="${reminder.done}" tabindex="0"></div>
       <div class="reminder-content">
         <span class="reminder-text">${reminder.category ? reminder.category + ' ' : ''}${escapeHtml(reminder.text)}</span>
+        ${reminder.note ? `<p class="reminder-note">${escapeHtml(reminder.note)}</p>` : ''}
         <div class="reminder-meta">
-          ${dueFormatted ? `<span class="reminder-due${overdue ? ' overdue' : ''}">${overdue ? '⚠️ ' : ''}${escapeHtml(dueFormatted)}</span>` : ''}
-          ${reminder.dueDate ? `<a href="${calUrl}" target="_blank" class="reminder-due" title="Add to Google Calendar">📅 Calendar</a>` : ''}
+          ${dueFormatted ? `<span class="tag tag-date${overdue ? ' overdue' : ''}">${overdue ? '⚠️ ' : ''}${escapeHtml(dueFormatted)}</span>` : ''}
+          ${reminder.dueDate ? `<a href="${calUrl}" target="_blank" class="tag tag-cal" title="Add to Google Calendar">📅 Calendar</a>` : ''}
         </div>
       </div>
       <div class="reminder-actions">
-        <button type="button" class="btn-edit" aria-label="Edit" title="Edit">✏️</button>
-        <button type="button" class="btn-delete" aria-label="Delete" title="Delete">🗑️</button>
+        <button type="button" class="btn-action" aria-label="Edit" title="Edit">✏️</button>
+        <button type="button" class="btn-action delete" aria-label="Delete" title="Delete">🗑️</button>
       </div>
     `;
 
-    li.querySelector('.reminder-checkbox').addEventListener('change', () => toggleDone(reminder.id));
-    li.querySelector('.btn-delete').addEventListener('click', () => remove(reminder.id));
-    li.querySelector('.btn-edit').addEventListener('click', () => editReminder(reminder.id));
+    li.querySelector('.custom-check').addEventListener('click', () => toggleDone(reminder.id));
+    li.querySelector('.btn-action.delete').addEventListener('click', () => remove(reminder.id));
+    li.querySelector('.btn-action:not(.delete)').addEventListener('click', () => editReminder(reminder.id));
 
     listEl.appendChild(li);
   });
@@ -289,22 +301,25 @@ function render() {
   const hasReminders = reminders.length > 0;
   emptyState.classList.toggle('hidden', filtered.length > 0);
   if (filtered.length === 0 && hasReminders) {
-    emptyState.textContent = searchQuery
-      ? `No reminders matching "${searchQuery}"`
-      : `No ${currentFilter} reminders.`;
+    emptyState.querySelector('.empty-title').textContent = searchQuery
+      ? `No matches for "${searchQuery}"`
+      : `No ${currentFilter} reminders`;
+    emptyState.querySelector('.empty-sub').textContent = 'Try a different filter';
   } else if (!hasReminders) {
-    emptyState.textContent = 'No reminders yet. Add one above! ✨';
+    emptyState.querySelector('.empty-title').textContent = 'No reminders yet';
+    emptyState.querySelector('.empty-sub').textContent = 'Add your first one above!';
   }
 
   updateStats();
 }
 
 /* ===== ACTIONS ===== */
-function addReminder(text, dueDate, category, priority) {
+function addReminder(text, note, dueDate, category, priority) {
   if (!text.trim()) return;
   const reminder = {
     id: crypto.randomUUID(),
     text: text.trim(),
+    note: note ? note.trim() : '',
     dueDate: dueDate || null,
     category: category || '',
     priority: priority || 'normal',
@@ -374,10 +389,12 @@ categoryBtns.forEach((btn) => {
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const text = input.value.trim();
+  const note = noteInput.value.trim();
   const due = dueDateInput.value || null;
   const priority = prioritySelect.value;
-  addReminder(text, due, selectedCategory, priority);
+  addReminder(text, note, due, selectedCategory, priority);
   input.value = '';
+  noteInput.value = '';
   dueDateInput.value = '';
   prioritySelect.value = 'normal';
   selectedCategory = '';
@@ -402,6 +419,7 @@ searchInput.addEventListener('input', () => {
 clearDoneBtn.addEventListener('click', clearDone);
 
 /* ===== INIT ===== */
+updateGreeting();
 loadDarkMode();
 loadReminders();
 render();
