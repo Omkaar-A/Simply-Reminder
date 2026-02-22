@@ -17,6 +17,24 @@ Your reminders are stored on your device. When you close the browser and open th
 
 ---
 
+## Host on GitHub Pages
+
+If your app is already in a GitHub repo, you can host it so it’s available at a public URL (e.g. from your phone or another computer).
+
+1. Open your repo on GitHub (e.g. `github.com/username/reminders-app`).
+2. Go to **Settings** → **Pages** (in the left sidebar).
+3. Under **Build and deployment** → **Source**, choose **Deploy from a branch**.
+4. Under **Branch**, select **main** (or **master**), set **Folder** to **/ (root)**, then click **Save**.
+5. After a minute or two, the site will be live at:
+   - `https://<username>.github.io/<repo-name>/`
+   - Example: repo `omkaar/reminders-app` → `https://omkaar.github.io/reminders-app/`
+
+No code changes are needed — the app is static HTML, CSS, and JS and works as-is from the root of your branch.
+
+If you use **Google Sign-in**, add this exact Pages URL to **Authorized JavaScript origins** in Google Cloud; see **Google Calendar setup** below.
+
+---
+
 ## Major update — what’s new
 
 This version is a big upgrade with more ways to organize and track your reminders.
@@ -113,7 +131,7 @@ To make “Sign in with Google” and calendar sync work, an adult needs to crea
 2. Click **Create Credentials** → **OAuth client ID**.
 3. If asked, configure the **OAuth consent screen** first (e.g. **External**, add app name).
 4. For **Application type**, choose **Web application**.
-5. Under **Authorized JavaScript origins**, add your site URL (e.g. `https://yourusername.github.io` if you host on GitHub Pages).
+5. Under **Authorized JavaScript origins**, add your GitHub Pages URL (e.g. `https://yourusername.github.io/reminders-app/`). See **Host on GitHub Pages** above for how to get this URL.
 6. Click **Create**, then copy the **Client ID** (e.g. `123456789-abc.apps.googleusercontent.com`).
 
 ### Step 4 — Add the Client ID to the app
@@ -124,7 +142,7 @@ To make “Sign in with Google” and calendar sync work, an adult needs to crea
 3. Replace `YOUR_CLIENT_ID_HERE.apps.googleusercontent.com` with the Client ID you copied (keep the quotes).
 4. Save the file.
 
-After that, the **Sign in with Google** button in the app will work. If you host the app online, use the same URL you added in Authorized JavaScript origins.
+After that, the **Sign in with Google** button in the app will work. If you host on GitHub Pages, use the exact URL from **Host on GitHub Pages** in Authorized JavaScript origins.
 
 ---
 

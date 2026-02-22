@@ -28,6 +28,14 @@
       </div>
     </header>
 
+    <!-- Section Tabs: Reminders | Birthdays -->
+    <nav class="section-tabs" aria-label="Switch section">
+      <button type="button" class="section-tab active" id="tabReminders" data-section="reminders">📋 Reminders</button>
+      <button type="button" class="section-tab" id="tabBirthdays" data-section="birthdays">🎂 Birthdays</button>
+    </nav>
+
+    <!-- Reminders Section -->
+    <section id="remindersSection" class="app-section active" aria-labelledby="tabReminders">
     <!-- Google Account -->
     <div class="glass-card google-bar" id="googleBar">
       <div id="googleSignedOut">
@@ -111,10 +119,11 @@
 
     <!-- Clear Done -->
     <button type="button" class="btn-clear-done hidden" id="clearDoneBtn">🗑️ Clear completed</button>
+    </section>
 
     <!-- Birthdays Section -->
-    <section class="birthdays-section" id="birthdaysSection">
-      <h2 class="section-title">🎂 Birthdays</h2>
+    <section id="birthdaysSection" class="app-section birthdays-section" aria-labelledby="tabBirthdays" hidden>
+      <h2 class="section-title">Birthdays</h2>
       <div class="glass-card birthday-add-card">
         <form id="birthdayForm">
           <div class="birthday-form-row">

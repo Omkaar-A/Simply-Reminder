@@ -40,6 +40,10 @@ const birthdayLabelInput = document.getElementById('birthdayLabel');
 const birthdayDateInput = document.getElementById('birthdayDate');
 const birthdayListEl = document.getElementById('birthdayList');
 const birthdayEmptyEl = document.getElementById('birthdayEmpty');
+const tabReminders = document.getElementById('tabReminders');
+const tabBirthdays = document.getElementById('tabBirthdays');
+const remindersSection = document.getElementById('remindersSection');
+const birthdaysSectionEl = document.getElementById('birthdaysSection');
 
 /* ===== STATE ===== */
 let reminders = [];
@@ -547,6 +551,18 @@ birthdayForm.addEventListener('submit', (e) => {
   birthdayDateInput.value = '';
   birthdayNameInput.focus();
 });
+
+/* ===== SECTION TABS ===== */
+function showSection(sectionId) {
+  const isReminders = sectionId === 'reminders';
+  remindersSection.hidden = !isReminders;
+  birthdaysSectionEl.hidden = isReminders;
+  tabReminders.classList.toggle('active', isReminders);
+  tabBirthdays.classList.toggle('active', !isReminders);
+}
+
+tabReminders.addEventListener('click', () => showSection('reminders'));
+tabBirthdays.addEventListener('click', () => showSection('birthdays'));
 
 /* ===== INIT ===== */
 updateGreeting();
