@@ -5,6 +5,7 @@ const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com';
 
 /* ===== STORAGE ===== */
 const STORAGE_KEY = 'reminders-app';
+const BIRTHDAYS_KEY = 'reminders-birthdays';
 const DARK_KEY = 'reminders-dark';
 
 /* ===== DOM ===== */
@@ -33,9 +34,16 @@ const googleSignedOut = document.getElementById('googleSignedOut');
 const googleSignedIn = document.getElementById('googleSignedIn');
 const googleAvatar = document.getElementById('googleAvatar');
 const googleName = document.getElementById('googleName');
+const birthdayForm = document.getElementById('birthdayForm');
+const birthdayNameInput = document.getElementById('birthdayName');
+const birthdayLabelInput = document.getElementById('birthdayLabel');
+const birthdayDateInput = document.getElementById('birthdayDate');
+const birthdayListEl = document.getElementById('birthdayList');
+const birthdayEmptyEl = document.getElementById('birthdayEmpty');
 
 /* ===== STATE ===== */
 let reminders = [];
+let birthdays = [];
 let currentFilter = 'all';
 let searchQuery = '';
 let selectedCategory = '';
@@ -52,6 +60,49 @@ function loadReminders() {
 
 function saveReminders() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(reminders));
+}
+
+function loadBirthdays() {
+  try {
+    const raw = localStorage.getItem(BIRTHDAYS_KEY);
+    birthdays = raw ? JSON.parse(raw) : [];
+  } catch {
+    birthdays = [];
+  }
+}
+
+function saveBirthdays() {
+  localStorage.setItem(BIRTHDAYS_KEY, JSON.stringify(birthdays));
+}
+
+/* ===== BIRTHDAY HELPERS ===== */
+// Format as "Dec 25" (month + day only)
+function formatBirthdayDisplay(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+// Days until next occurrence of this month-day (0 = today, 1 = tomorrow, etc.)
+function daysUntilNextBirthday(dateStr) {
+  if (!dateStr) return 9999;
+  const parts = dateStr.split('-');
+  const month = parseInt(parts[1], 10) - 1;
+  const day = parseInt(parts[2], 10);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let next = new Date(today.getFullYear(), month, day);
+  if (next < today) next = new Date(today.getFullYear() + 1, month, day);
+  const diff = Math.ceil((next - today) / (1000 * 60 * 60 * 24));
+  return diff;
+}
+
+function getBirthdayLabel(days) {
+  if (days === 0) return 'Today! 🎉';
+  if (days === 1) return 'Tomorrow';
+  if (days <= 7) return `In ${days} days`;
+  if (days <= 30) return `In ${days} days`;
+  return `${days} days away`;
 }
 
 /* ===== GREETING ===== */
@@ -370,6 +421,73 @@ function clearDone() {
   render();
 }
 
+/* ===== BIRTHDAYS ===== */
+function addBirthday(name, label, dateStr) {
+  if (!name.trim() || !dateStr) return;
+  const entry = {
+    id: crypto.randomUUID(),
+    name: name.trim(),
+    label: label ? label.trim() : '',
+    date: dateStr,
+    createdAt: Date.now(),
+  };
+  birthdays.push(entry);
+  saveBirthdays();
+  renderBirthdays();
+}
+
+function removeBirthday(id) {
+  birthdays = birthdays.filter((b) => b.id !== id);
+  saveBirthdays();
+  renderBirthdays();
+}
+
+function editBirthday(id) {
+  const b = birthdays.find((x) => x.id === id);
+  if (!b) return;
+  const newName = prompt('Edit name:', b.name);
+  if (newName !== null && newName.trim()) {
+    b.name = newName.trim();
+    const newLabel = prompt('Edit label (e.g. Mom, Best friend). Leave blank to keep:', b.label);
+    if (newLabel !== null) b.label = newLabel.trim();
+    saveBirthdays();
+    renderBirthdays();
+  }
+}
+
+function renderBirthdays() {
+  // Sort by next occurrence (soonest first)
+  const sorted = [...birthdays].sort((a, b) => daysUntilNextBirthday(a.date) - daysUntilNextBirthday(b.date));
+  birthdayListEl.innerHTML = '';
+
+  sorted.forEach((b) => {
+    const li = document.createElement('li');
+    const days = daysUntilNextBirthday(b.date);
+    const isToday = days === 0;
+    li.className = 'birthday-item' + (isToday ? ' birthday-today' : '');
+    li.dataset.id = b.id;
+    const labelPart = b.label ? ` <span class="birthday-label">(${escapeHtml(b.label)})</span>` : '';
+    li.innerHTML = `
+      <div class="birthday-content">
+        <span class="birthday-name">${escapeHtml(b.name)}${labelPart}</span>
+        <div class="birthday-meta">
+          <span class="tag tag-birthday-date">${formatBirthdayDisplay(b.date)}</span>
+          <span class="tag tag-birthday-next${isToday ? ' birthday-today-tag' : ''}">${getBirthdayLabel(days)}</span>
+        </div>
+      </div>
+      <div class="reminder-actions">
+        <button type="button" class="btn-action" aria-label="Edit" title="Edit">✏️</button>
+        <button type="button" class="btn-action delete" aria-label="Delete" title="Delete">🗑️</button>
+      </div>
+    `;
+    li.querySelector('.btn-action.delete').addEventListener('click', () => removeBirthday(b.id));
+    li.querySelector('.btn-action:not(.delete)').addEventListener('click', () => editBirthday(b.id));
+    birthdayListEl.appendChild(li);
+  });
+
+  birthdayEmptyEl.classList.toggle('hidden', birthdays.length > 0);
+}
+
 /* ===== CATEGORY PICKER ===== */
 categoryBtns.forEach((btn) => {
   btn.addEventListener('click', () => {
@@ -418,8 +536,22 @@ searchInput.addEventListener('input', () => {
 
 clearDoneBtn.addEventListener('click', clearDone);
 
+birthdayForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = birthdayNameInput.value.trim();
+  const label = birthdayLabelInput.value.trim();
+  const date = birthdayDateInput.value;
+  addBirthday(name, label, date);
+  birthdayNameInput.value = '';
+  birthdayLabelInput.value = '';
+  birthdayDateInput.value = '';
+  birthdayNameInput.focus();
+});
+
 /* ===== INIT ===== */
 updateGreeting();
 loadDarkMode();
 loadReminders();
+loadBirthdays();
 render();
+renderBirthdays();

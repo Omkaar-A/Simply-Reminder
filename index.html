@@ -111,6 +111,29 @@
 
     <!-- Clear Done -->
     <button type="button" class="btn-clear-done hidden" id="clearDoneBtn">🗑️ Clear completed</button>
+
+    <!-- Birthdays Section -->
+    <section class="birthdays-section" id="birthdaysSection">
+      <h2 class="section-title">🎂 Birthdays</h2>
+      <div class="glass-card birthday-add-card">
+        <form id="birthdayForm">
+          <div class="birthday-form-row">
+            <input type="text" id="birthdayName" placeholder="Name" autocomplete="off" maxlength="80" required />
+            <input type="text" id="birthdayLabel" placeholder="e.g. Mom, Best friend" autocomplete="off" maxlength="40" />
+          </div>
+          <div class="birthday-form-row">
+            <input type="date" id="birthdayDate" title="Birthday (year doesn't matter)" required />
+            <button type="submit" class="btn-primary btn-birthday">Add birthday</button>
+          </div>
+        </form>
+      </div>
+      <ul class="birthday-list" id="birthdayList"></ul>
+      <div class="empty-state birthday-empty" id="birthdayEmpty">
+        <div class="empty-icon">🎈</div>
+        <p class="empty-title">No birthdays yet</p>
+        <p class="empty-sub">Add family & friends above!</p>
+      </div>
+    </section>
   </div>
 
   <script src="app.js"></script>
