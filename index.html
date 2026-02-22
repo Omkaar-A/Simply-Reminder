@@ -24,9 +24,31 @@
         </div>
         <div class="header-actions">
           <button type="button" class="btn-icon" id="darkModeToggle" title="Toggle dark mode">🌙</button>
+          <button type="button" class="btn-icon" id="settingsBtn" title="Settings">⚙️</button>
         </div>
       </div>
     </header>
+
+    <!-- Settings overlay -->
+    <div class="settings-overlay hidden" id="settingsOverlay" aria-hidden="true">
+      <div class="settings-panel glass-card" id="settingsPanel" role="dialog" aria-label="Settings">
+        <div class="settings-header">
+          <h2 class="settings-title">Settings</h2>
+          <button type="button" class="btn-icon btn-close-settings" id="settingsClose" aria-label="Close settings">✕</button>
+        </div>
+        <div class="settings-body">
+          <section class="settings-section">
+            <h3 class="settings-section-title">Appearance</h3>
+            <div class="settings-row">
+              <label for="settingsDarkMode" class="settings-label">Dark mode</label>
+              <button type="button" class="settings-toggle" id="settingsDarkMode" role="switch" aria-checked="false" title="Toggle dark mode">
+                <span class="settings-toggle-slider"></span>
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
 
     <!-- Section Tabs: Reminders | Birthdays -->
     <nav class="section-tabs" aria-label="Switch section">

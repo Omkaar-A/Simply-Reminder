@@ -44,6 +44,10 @@ const tabReminders = document.getElementById('tabReminders');
 const tabBirthdays = document.getElementById('tabBirthdays');
 const remindersSection = document.getElementById('remindersSection');
 const birthdaysSectionEl = document.getElementById('birthdaysSection');
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsOverlay = document.getElementById('settingsOverlay');
+const settingsClose = document.getElementById('settingsClose');
+const settingsDarkModeToggle = document.getElementById('settingsDarkMode');
 
 /* ===== STATE ===== */
 let reminders = [];
@@ -121,15 +125,65 @@ function updateGreeting() {
 
 /* ===== DARK MODE ===== */
 function loadDarkMode() {
-  const dark = localStorage.getItem(DARK_KEY) === 'true';
+  const h = new Date().getHours();
+  const isNight = h >= 17 || h < 5;
+  let dark = localStorage.getItem(DARK_KEY) === 'true';
+  if (isNight) dark = true;
   document.body.classList.toggle('dark', dark);
   darkModeToggle.textContent = dark ? '☀️' : '🌙';
+  if (isNight) localStorage.setItem(DARK_KEY, 'true');
+  syncSettingsDarkModeUI();
+}
+
+function setDarkMode(isDark) {
+  document.body.classList.toggle('dark', isDark);
+  localStorage.setItem(DARK_KEY, isDark);
+  darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+  if (settingsDarkModeToggle) {
+    settingsDarkModeToggle.setAttribute('aria-checked', isDark);
+    settingsDarkModeToggle.classList.toggle('on', isDark);
+  }
 }
 
 darkModeToggle.addEventListener('click', () => {
-  const isDark = document.body.classList.toggle('dark');
-  localStorage.setItem(DARK_KEY, isDark);
-  darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+  setDarkMode(document.body.classList.toggle('dark'));
+});
+
+function syncSettingsDarkModeUI() {
+  const isDark = document.body.classList.contains('dark');
+  if (settingsDarkModeToggle) {
+    settingsDarkModeToggle.setAttribute('aria-checked', isDark);
+    settingsDarkModeToggle.classList.toggle('on', isDark);
+  }
+}
+
+/* ===== SETTINGS ===== */
+function openSettings() {
+  settingsOverlay.classList.remove('hidden');
+  settingsOverlay.setAttribute('aria-hidden', 'false');
+  syncSettingsDarkModeUI();
+}
+
+function closeSettings() {
+  settingsOverlay.classList.add('hidden');
+  settingsOverlay.setAttribute('aria-hidden', 'true');
+}
+
+settingsBtn.addEventListener('click', openSettings);
+settingsClose.addEventListener('click', closeSettings);
+settingsOverlay.addEventListener('click', (e) => {
+  if (e.target === settingsOverlay) closeSettings();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !settingsOverlay.classList.contains('hidden')) closeSettings();
+});
+settingsDarkModeToggle.addEventListener('click', () => {
+  const isDark = !document.body.classList.contains('dark');
+  setDarkMode(isDark);
+});
+document.querySelector('label[for="settingsDarkMode"]')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  settingsDarkModeToggle.click();
 });
 
 /* ===== HELPERS ===== */
