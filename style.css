@@ -1,0 +1,242 @@
+:root {
+  --bg: #eef6ff;
+  --surface: #fff;
+  --text: #2d2a26;
+  --text-muted: #6b6560;
+  --accent: #ff6b6b;
+  --accent-hover: #ee5a5a;
+  --border: #e0d4f5;
+  --done: #51cf66;
+  --shadow: 0 2px 16px rgba(120, 80, 200, 0.1);
+  --radius: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "DM Sans", system-ui, sans-serif;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #d4c4fb 100%);
+  color: var(--text);
+  padding: 2rem 1rem;
+  line-height: 1.5;
+}
+
+.app {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #ff6b6b, #ffa502, #ff6348, #a55eea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tagline {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.add-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+#reminderInput {
+  flex: 1;
+  min-width: 160px;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: 0.95rem;
+  background: var(--surface);
+  color: var(--text);
+}
+
+#reminderInput::placeholder {
+  color: var(--text-muted);
+}
+
+#reminderInput:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(196, 92, 62, 0.15);
+}
+
+#dueDate {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: 0.9rem;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.btn-add {
+  padding: 0.75rem 1.25rem;
+  background: linear-gradient(135deg, #ff6b6b, #ffa502);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-add:hover {
+  background: linear-gradient(135deg, #ee5a5a, #e89400);
+}
+
+.btn-add:active {
+  transform: scale(0.98);
+}
+
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #a55eea, #5f72e4);
+  color: #fff;
+  border-color: transparent;
+}
+
+.reminder-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.reminder-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-left: 4px solid #a55eea;
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+  box-shadow: var(--shadow);
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.reminder-item:nth-child(2) {
+  border-left-color: #ff6b6b;
+}
+
+.reminder-item:nth-child(3) {
+  border-left-color: #ffa502;
+}
+
+.reminder-item:nth-child(4) {
+  border-left-color: #2ed573;
+}
+
+.reminder-item:nth-child(5) {
+  border-left-color: #1e90ff;
+}
+
+.reminder-item:hover {
+  border-color: #ddd9d4;
+}
+
+.reminder-item.done {
+  opacity: 0.75;
+}
+
+.reminder-item.done .reminder-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.reminder-checkbox {
+  width: 20px;
+  height: 20px;
+  accent-color: #51cf66;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.reminder-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.reminder-text {
+  font-size: 0.95rem;
+  word-break: break-word;
+}
+
+.reminder-due {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.btn-delete {
+  padding: 0.4rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.btn-delete:hover {
+  background: rgba(45, 42, 38, 0.08);
+  color: var(--text);
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  padding: 2rem 1rem;
+  margin: 0;
+}
+
+.empty-state.hidden {
+  display: none;
+}

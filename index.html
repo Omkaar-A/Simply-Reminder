@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reminders</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>Reminders</h1>
+      <p class="tagline">Keep track of what matters</p>
+    </header>
+
+    <form class="add-form" id="addForm">
+      <input
+        type="text"
+        id="reminderInput"
+        placeholder="What do you need to remember?"
+        autocomplete="off"
+        maxlength="200"
+      />
+      <input type="date" id="dueDate" title="Due date (optional)" />
+      <button type="submit" class="btn-add" aria-label="Add reminder">Add</button>
+    </form>
+
+    <div class="filters">
+      <button type="button" class="filter-btn active" data-filter="all">All</button>
+      <button type="button" class="filter-btn" data-filter="active">Active</button>
+      <button type="button" class="filter-btn" data-filter="done">Done</button>
+    </div>
+
+    <ul class="reminder-list" id="reminderList"></ul>
+
+    <p class="empty-state" id="emptyState">No reminders yet. Add one above.</p>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
