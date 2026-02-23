@@ -217,6 +217,29 @@ body.no-animate-bg {
   transition: transform 0.25s;
 }
 
+.settings-copy-row {
+  flex-wrap: wrap;
+}
+.btn-copy-instructions {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-copy-instructions:hover:not(:disabled) {
+  background: rgba(108, 92, 231, 0.25);
+  transform: translateY(-1px);
+}
+.btn-copy-instructions:disabled {
+  cursor: default;
+  opacity: 0.9;
+}
+
 /* ===== GLASS CARD ===== */
 .glass-card {
   background: var(--glass);
