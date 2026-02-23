@@ -139,10 +139,15 @@ function updateGreeting() {
 
 /* ===== DARK MODE & AUTO APPEARANCE ===== */
 // Morning 5–12: light, ☀️ | Afternoon 12–17: light, ☀️☁️ | Night 17–5: dark, 🌙
+// Light until 7:00 PM, dark from 7:01 PM onward
 function getAppearanceByTime() {
-  const h = new Date().getHours();
-  const isNight = h >= 17 || h < 5;
-  if (isNight) return { dark: true, icon: '🌙' };
+  const d = new Date();
+  const h = d.getHours();
+  const m = d.getMinutes();
+  const totalMins = h * 60 + m;
+  const darkFrom = 19 * 60 + 1; // 7:01 PM
+  const isDark = totalMins >= darkFrom;
+  if (isDark) return { dark: true, icon: '🌙' };
   if (h < 12) return { dark: false, icon: '☀️' };
   return { dark: false, icon: '☀️☁️' };
 }
