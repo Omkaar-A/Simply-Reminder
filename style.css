@@ -754,8 +754,8 @@ body.dark .edit-birthday-panel {
   align-items: center;
   gap: 0.6rem;
   padding: 1.15rem 1.25rem;
-  border-bottom: 1px solid var(--glass-border);
-  background: linear-gradient(135deg, rgba(253, 121, 168, 0.08), rgba(108, 92, 231, 0.06));
+  border-bottom: 2px solid rgba(253, 121, 168, 0.3);
+  background: linear-gradient(135deg, rgba(253, 121, 168, 0.2) 0%, rgba(108, 92, 231, 0.15) 50%, rgba(0, 206, 201, 0.12) 100%);
 }
 .edit-birthday-icon {
   font-size: 1.5rem;
@@ -771,43 +771,65 @@ body.dark .edit-birthday-panel {
 .edit-birthday-close {
   width: 36px;
   height: 36px;
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  background: transparent;
+  border-radius: 50%;
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(253, 121, 168, 0.25), rgba(108, 92, 231, 0.2));
   border: none;
   cursor: pointer;
   font-size: 1.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s, background 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 .edit-birthday-close:hover {
-  color: var(--text);
-  background: var(--accent-soft);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
 }
 
 .edit-birthday-form {
   padding: 1.25rem 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 1.15rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(253, 121, 168, 0.04) 100%);
+}
+body.dark .edit-birthday-form {
+  background: linear-gradient(180deg, rgba(30, 28, 45, 0.6) 0%, rgba(253, 121, 168, 0.06) 100%);
 }
 
 .edit-birthday-field {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 .edit-birthday-field label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: block;
 }
+.edit-birthday-form .edit-birthday-field:nth-child(1) label {
+  color: #c44569;
+}
+.edit-birthday-form .edit-birthday-field:nth-child(2) label {
+  color: #0984e3;
+}
+.edit-birthday-form .edit-birthday-field:nth-child(3) label {
+  color: #00b894;
+}
+body.dark .edit-birthday-form .edit-birthday-field:nth-child(1) label {
+  color: #fd79a8;
+}
+body.dark .edit-birthday-form .edit-birthday-field:nth-child(2) label {
+  color: #74b9ff;
+}
+body.dark .edit-birthday-form .edit-birthday-field:nth-child(3) label {
+  color: #55efc4;
+}
+
 .edit-birthday-form .edit-birthday-field input {
-  padding: 0.7rem 1rem;
+  padding: 0.75rem 1rem;
   border: 2px solid var(--glass-border);
   border-radius: var(--radius-sm);
   font: inherit;
@@ -816,13 +838,20 @@ body.dark .edit-birthday-panel {
   color: var(--text);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+.edit-birthday-form .edit-birthday-field:nth-child(1) input:focus {
+  border-color: #c44569;
+  box-shadow: 0 0 0 3px rgba(196, 69, 105, 0.2);
+}
+.edit-birthday-form .edit-birthday-field:nth-child(2) input:focus {
+  border-color: #0984e3;
+  box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.2);
+}
+.edit-birthday-form .edit-birthday-field:nth-child(3) input:focus {
+  border-color: #00b894;
+  box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+}
 .edit-birthday-form .edit-birthday-field input::placeholder {
   color: var(--text-muted);
-}
-.edit-birthday-form .edit-birthday-field input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 .edit-birthday-form #editBirthdayDate {
   min-height: 44px;
@@ -833,7 +862,8 @@ body.dark .edit-birthday-panel {
   display: flex;
   gap: 0.75rem;
   margin-top: 0.5rem;
-  padding-top: 0.25rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--glass-border);
 }
 .edit-birthday-actions .btn-edit-cancel {
   flex: 1;
@@ -842,24 +872,35 @@ body.dark .edit-birthday-panel {
   font: inherit;
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--text-secondary);
-  background: transparent;
-  border: 2px solid var(--glass-border);
+  color: #0984e3;
+  background: rgba(9, 132, 227, 0.1);
+  border: 2px solid rgba(9, 132, 227, 0.4);
   cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
 .edit-birthday-actions .btn-edit-cancel:hover {
-  border-color: var(--text-muted);
-  color: var(--text);
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(9, 132, 227, 0.2);
+  border-color: #0984e3;
+  color: #0d6bb8;
+}
+body.dark .edit-birthday-actions .btn-edit-cancel {
+  color: #74b9ff;
+  background: rgba(116, 185, 255, 0.12);
+  border-color: rgba(116, 185, 255, 0.35);
 }
 body.dark .edit-birthday-actions .btn-edit-cancel:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(116, 185, 255, 0.22);
+  border-color: #74b9ff;
 }
 .edit-birthday-actions .btn-edit-update {
   flex: 1;
   padding: 0.7rem 1.25rem;
   font-weight: 600;
+  background: linear-gradient(135deg, #6c5ce7, #fd79a8) !important;
+  box-shadow: 0 4px 14px rgba(108, 92, 231, 0.35);
+}
+.edit-birthday-actions .btn-edit-update:hover {
+  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.45), 0 0 20px rgba(253, 121, 168, 0.25);
 }
 
 .birthday-list {
