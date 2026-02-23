@@ -208,24 +208,29 @@
       </div>
 
       <!-- Edit birthday overlay -->
-      <div class="settings-overlay hidden" id="editBirthdayOverlay" aria-hidden="true">
-        <div class="settings-panel glass-card" id="editBirthdayPanel" role="dialog" aria-label="Edit birthday">
-          <div class="settings-header">
-            <h2 class="settings-title">Edit birthday</h2>
-            <button type="button" class="btn-icon btn-close-settings" id="editBirthdayClose" aria-label="Close">✕</button>
+      <div class="edit-birthday-overlay hidden" id="editBirthdayOverlay" aria-hidden="true">
+        <div class="edit-birthday-panel glass-card" id="editBirthdayPanel" role="dialog" aria-label="Edit birthday">
+          <div class="edit-birthday-header">
+            <span class="edit-birthday-icon">🎂</span>
+            <h2 class="edit-birthday-title">Edit birthday</h2>
+            <button type="button" class="btn-icon edit-birthday-close" id="editBirthdayClose" aria-label="Close">✕</button>
           </div>
-          <form id="editBirthdayForm" class="settings-body">
-            <div class="birthday-form-row">
-              <input type="text" id="editBirthdayName" placeholder="Name" autocomplete="off" maxlength="80" required />
+          <form id="editBirthdayForm" class="edit-birthday-form">
+            <div class="edit-birthday-field">
+              <label for="editBirthdayName">Name</label>
+              <input type="text" id="editBirthdayName" placeholder="e.g. Alex" autocomplete="off" maxlength="80" required />
+            </div>
+            <div class="edit-birthday-field">
+              <label for="editBirthdayLabel">Label</label>
               <input type="text" id="editBirthdayLabel" placeholder="e.g. Mom, Best friend" autocomplete="off" maxlength="40" />
             </div>
-            <div class="birthday-form-row">
-              <label for="editBirthdayDate" class="edit-birthday-date-label">Birthday</label>
-              <input type="date" id="editBirthdayDate" title="Birthday (year doesn't matter)" required />
+            <div class="edit-birthday-field">
+              <label for="editBirthdayDate">Birthday</label>
+              <input type="date" id="editBirthdayDate" title="Year doesn't matter" required />
             </div>
-            <div class="birthday-form-row">
-              <button type="button" class="btn-text-muted" id="editBirthdayCancel">Cancel</button>
-              <button type="submit" class="btn-primary btn-birthday">Update</button>
+            <div class="edit-birthday-actions">
+              <button type="button" class="btn-edit-cancel" id="editBirthdayCancel">Cancel</button>
+              <button type="submit" class="btn-primary btn-edit-update">Update</button>
             </div>
           </form>
         </div>
