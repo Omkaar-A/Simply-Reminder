@@ -13,6 +13,7 @@ const SETTINGS_KEYS = {
   statsBar: 'reminders-stats-bar',
   progressBar: 'reminders-progress-bar',
   autoCalendar: 'reminders-auto-calendar',
+  autoAppearance: 'reminders-auto-appearance',
 };
 
 /* ===== DOM ===== */
@@ -60,6 +61,7 @@ const settingsConfetti = document.getElementById('settingsConfetti');
 const settingsStatsBar = document.getElementById('settingsStatsBar');
 const settingsProgressBar = document.getElementById('settingsProgressBar');
 const settingsAutoCalendar = document.getElementById('settingsAutoCalendar');
+const settingsAutoAppearance = document.getElementById('settingsAutoAppearance');
 
 /* ===== STATE ===== */
 let reminders = [];
@@ -135,22 +137,48 @@ function updateGreeting() {
   greetingEl.textContent = msg;
 }
 
-/* ===== DARK MODE ===== */
-function loadDarkMode() {
+/* ===== DARK MODE & AUTO APPEARANCE ===== */
+// Morning 5–12: light, ☀️ | Afternoon 12–17: light, ☀️☁️ | Night 17–5: dark, 🌙
+function getAppearanceByTime() {
   const h = new Date().getHours();
   const isNight = h >= 17 || h < 5;
-  let dark = localStorage.getItem(DARK_KEY) === 'true';
-  if (isNight) dark = true;
+  if (isNight) return { dark: true, icon: '🌙' };
+  if (h < 12) return { dark: false, icon: '☀️' };
+  return { dark: false, icon: '☀️☁️' };
+}
+
+function updateAppearanceByTime() {
+  if (!getSetting('autoAppearance', false)) return;
+  const { dark, icon } = getAppearanceByTime();
   document.body.classList.toggle('dark', dark);
-  darkModeToggle.textContent = dark ? '☀️' : '🌙';
-  if (isNight) localStorage.setItem(DARK_KEY, 'true');
+  localStorage.setItem(DARK_KEY, dark);
+  darkModeToggle.textContent = icon;
+  syncSettingsDarkModeUI();
+}
+
+function loadDarkMode() {
+  if (getSetting('autoAppearance', false)) {
+    const { dark, icon } = getAppearanceByTime();
+    document.body.classList.toggle('dark', dark);
+    localStorage.setItem(DARK_KEY, dark);
+    darkModeToggle.textContent = icon;
+  } else {
+    const dark = localStorage.getItem(DARK_KEY) === 'true';
+    document.body.classList.toggle('dark', dark);
+    darkModeToggle.textContent = dark ? '☀️' : '🌙';
+  }
   syncSettingsDarkModeUI();
 }
 
 function setDarkMode(isDark) {
   document.body.classList.toggle('dark', isDark);
   localStorage.setItem(DARK_KEY, isDark);
-  darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+  if (getSetting('autoAppearance', false)) {
+    const { icon } = getAppearanceByTime();
+    darkModeToggle.textContent = icon;
+  } else {
+    darkModeToggle.textContent = isDark ? '☀️' : '🌙';
+  }
   if (settingsDarkModeToggle) {
     settingsDarkModeToggle.setAttribute('aria-checked', isDark);
     settingsDarkModeToggle.classList.toggle('on', isDark);
@@ -158,7 +186,16 @@ function setDarkMode(isDark) {
 }
 
 darkModeToggle.addEventListener('click', () => {
-  setDarkMode(document.body.classList.toggle('dark'));
+  const autoOn = getSetting('autoAppearance', false);
+  if (autoOn) {
+    setSetting('autoAppearance', false);
+    if (settingsAutoAppearance) {
+      settingsAutoAppearance.setAttribute('aria-checked', 'false');
+      settingsAutoAppearance.classList.remove('on');
+    }
+  }
+  const newDark = !document.body.classList.contains('dark');
+  setDarkMode(newDark);
 });
 
 function syncSettingsDarkModeUI() {
@@ -192,6 +229,10 @@ function applySetting(key, value) {
     case 'progressBar':
       document.querySelector('.progress-bar-container').classList.toggle('hidden', !value);
       break;
+    case 'autoAppearance':
+      if (value) updateAppearanceByTime();
+      else darkModeToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+      break;
     default:
       break;
   }
@@ -204,19 +245,21 @@ function loadSettings() {
   document.body.classList.toggle('no-animate-bg', !animatedBg);
   document.querySelector('.stats-bar').classList.toggle('hidden', !statsBar);
   document.querySelector('.progress-bar-container').classList.toggle('hidden', !progressBar);
+  if (getSetting('autoAppearance', false)) updateAppearanceByTime();
 }
 
 function syncSettingsTogglesUI() {
   const toggles = [
-    [settingsAnimatedBg, 'animatedBg'],
-    [settingsConfetti, 'confetti'],
-    [settingsStatsBar, 'statsBar'],
-    [settingsProgressBar, 'progressBar'],
-    [settingsAutoCalendar, 'autoCalendar'],
+    [settingsAnimatedBg, 'animatedBg', true],
+    [settingsConfetti, 'confetti', true],
+    [settingsStatsBar, 'statsBar', true],
+    [settingsProgressBar, 'progressBar', true],
+    [settingsAutoCalendar, 'autoCalendar', true],
+    [settingsAutoAppearance, 'autoAppearance', false],
   ];
-  toggles.forEach(([el, key]) => {
+  toggles.forEach(([el, key, defaultOn]) => {
     if (!el) return;
-    const on = getSetting(key, true);
+    const on = getSetting(key, defaultOn);
     el.setAttribute('aria-checked', on);
     el.classList.toggle('on', on);
   });
@@ -244,6 +287,13 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !settingsOverlay.classList.contains('hidden')) closeSettings();
 });
 settingsDarkModeToggle.addEventListener('click', () => {
+  if (getSetting('autoAppearance', false)) {
+    setSetting('autoAppearance', false);
+    if (settingsAutoAppearance) {
+      settingsAutoAppearance.setAttribute('aria-checked', 'false');
+      settingsAutoAppearance.classList.remove('on');
+    }
+  }
   const isDark = !document.body.classList.contains('dark');
   setDarkMode(isDark);
 });
@@ -252,10 +302,10 @@ document.querySelector('label[for="settingsDarkMode"]')?.addEventListener('click
   settingsDarkModeToggle.click();
 });
 
-function bindSettingsToggle(element, key) {
+function bindSettingsToggle(element, key, defaultValue = true) {
   if (!element) return;
   element.addEventListener('click', () => {
-    const next = !getSetting(key, true);
+    const next = !getSetting(key, defaultValue);
     setSetting(key, next);
     element.setAttribute('aria-checked', next);
     element.classList.toggle('on', next);
@@ -281,11 +331,16 @@ document.querySelector('label[for="settingsAutoCalendar"]')?.addEventListener('c
   e.preventDefault();
   settingsAutoCalendar?.click();
 });
+document.querySelector('label[for="settingsAutoAppearance"]')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  settingsAutoAppearance?.click();
+});
 bindSettingsToggle(settingsAnimatedBg, 'animatedBg');
 bindSettingsToggle(settingsConfetti, 'confetti');
 bindSettingsToggle(settingsStatsBar, 'statsBar');
 bindSettingsToggle(settingsProgressBar, 'progressBar');
 bindSettingsToggle(settingsAutoCalendar, 'autoCalendar');
+bindSettingsToggle(settingsAutoAppearance, 'autoAppearance', false);
 
 const copySetupInstructionsBtn = document.getElementById('copySetupInstructionsBtn');
 const SETUP_EMAIL_TEXT = `Subject: Quick setup for Simply Reminder (Google Calendar sign-in)
@@ -761,6 +816,7 @@ updateGreeting();
 loadDarkMode();
 loadSettings();
 loadReminders();
+setInterval(updateAppearanceByTime, 60000);
 loadBirthdays();
 render();
 renderBirthdays();
