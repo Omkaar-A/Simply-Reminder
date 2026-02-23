@@ -81,17 +81,6 @@
                 <span class="settings-toggle-slider"></span>
               </button>
             </div>
-            <div class="settings-setup-wrap" id="googleSetupWrap">
-              <p class="settings-setup-intro">Only the person who hosts this app needs to do this once. Everyone else can just click “Sign in with Google” and use their own account.</p>
-              <p class="settings-setup-intro">Connect your calendar (one-time setup):</p>
-              <ol class="settings-setup-list">
-                <li>Go to <a href="https://console.cloud.google.com" target="_blank" rel="noopener">Google Cloud Console</a> and create a project (e.g. “Simply Reminder”).</li>
-                <li><strong>APIs & Services</strong> → <strong>Library</strong> → search for <strong>Google Calendar API</strong> → <strong>Enable</strong>.</li>
-                <li><strong>APIs & Services</strong> → <strong>Credentials</strong> → <strong>Create Credentials</strong> → <strong>OAuth client ID</strong>. If asked, set up the OAuth consent screen first. Choose <strong>Web application</strong>. Under <strong>Authorized JavaScript origins</strong>, add your app URL (e.g. <code>https://yourusername.github.io/Simply-Reminder/</code> or <code>http://localhost:8000</code> if testing locally). Create and copy the <strong>Client ID</strong>.</li>
-                <li>In this project open <code>app.js</code>, find the line with <code>GOOGLE_CLIENT_ID</code>, and replace <code>YOUR_CLIENT_ID_HERE.apps.googleusercontent.com</code> with your Client ID. Save the file and refresh the app.</li>
-              </ol>
-              <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="settings-setup-link">Open Google Cloud Console → Credentials</a>
-            </div>
           </section>
         </div>
       </div>
