@@ -708,6 +708,27 @@ body.dark .add-card {
   color: var(--text);
 }
 
+#editBirthdayDate,
+#editBirthdayName,
+#editBirthdayLabel {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.85rem;
+  background: transparent;
+  color: var(--text);
+}
+#editBirthdayDate { min-width: 10rem; }
+#editBirthdayName { flex: 1; min-width: 8rem; }
+#editBirthdayLabel { flex: 1; min-width: 8rem; }
+.edit-birthday-date-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  align-self: center;
+}
+
 .btn-birthday { flex-shrink: 0; }
 
 .birthday-list {

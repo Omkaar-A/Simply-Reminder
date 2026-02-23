@@ -676,16 +676,26 @@ function removeBirthday(id) {
 
 let editingBirthdayId = null;
 
+function toYYYYMMDD(dateStr) {
+  if (!dateStr) return '';
+  const s = String(dateStr).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const d = new Date(s + (s.includes('T') ? '' : 'T12:00:00'));
+  if (isNaN(d.getTime())) return s;
+  const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 function openEditBirthday(id) {
   const b = birthdays.find((x) => x.id === id);
   if (!b) return;
   editingBirthdayId = id;
-  editBirthdayNameInput.value = b.name;
-  editBirthdayLabelInput.value = b.label || '';
-  editBirthdayDateInput.value = b.date;
+  if (editBirthdayNameInput) editBirthdayNameInput.value = b.name;
+  if (editBirthdayLabelInput) editBirthdayLabelInput.value = b.label || '';
+  if (editBirthdayDateInput) editBirthdayDateInput.value = toYYYYMMDD(b.date);
   editBirthdayOverlay.classList.remove('hidden');
   editBirthdayOverlay.setAttribute('aria-hidden', 'false');
-  editBirthdayNameInput.focus();
+  if (editBirthdayNameInput) editBirthdayNameInput.focus();
 }
 
 function closeEditBirthday() {
@@ -700,13 +710,13 @@ function editBirthday(id) {
 
 function saveEditBirthday() {
   if (!editingBirthdayId) return;
-  const name = editBirthdayNameInput.value.trim();
-  const date = editBirthdayDateInput.value;
+  const name = editBirthdayNameInput ? editBirthdayNameInput.value.trim() : '';
+  const date = editBirthdayDateInput ? editBirthdayDateInput.value.trim() : '';
   if (!name || !date) return;
   const b = birthdays.find((x) => x.id === editingBirthdayId);
   if (!b) return;
   b.name = name;
-  b.label = editBirthdayLabelInput.value.trim();
+  b.label = editBirthdayLabelInput ? editBirthdayLabelInput.value.trim() : '';
   b.date = date;
   saveBirthdays();
   renderBirthdays();
