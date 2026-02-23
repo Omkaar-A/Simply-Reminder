@@ -175,6 +175,10 @@ body.no-animate-bg {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+.settings-row:last-child {
+  margin-bottom: 0;
 }
 
 .settings-label {
