@@ -48,6 +48,13 @@ const birthdayLabelInput = document.getElementById('birthdayLabel');
 const birthdayDateInput = document.getElementById('birthdayDate');
 const birthdayListEl = document.getElementById('birthdayList');
 const birthdayEmptyEl = document.getElementById('birthdayEmpty');
+const editBirthdayOverlay = document.getElementById('editBirthdayOverlay');
+const editBirthdayForm = document.getElementById('editBirthdayForm');
+const editBirthdayNameInput = document.getElementById('editBirthdayName');
+const editBirthdayLabelInput = document.getElementById('editBirthdayLabel');
+const editBirthdayDateInput = document.getElementById('editBirthdayDate');
+const editBirthdayClose = document.getElementById('editBirthdayClose');
+const editBirthdayCancel = document.getElementById('editBirthdayCancel');
 const tabReminders = document.getElementById('tabReminders');
 const tabBirthdays = document.getElementById('tabBirthdays');
 const remindersSection = document.getElementById('remindersSection');
@@ -667,17 +674,43 @@ function removeBirthday(id) {
   renderBirthdays();
 }
 
-function editBirthday(id) {
+let editingBirthdayId = null;
+
+function openEditBirthday(id) {
   const b = birthdays.find((x) => x.id === id);
   if (!b) return;
-  const newName = prompt('Edit name:', b.name);
-  if (newName !== null && newName.trim()) {
-    b.name = newName.trim();
-    const newLabel = prompt('Edit label (e.g. Mom, Best friend). Leave blank to keep:', b.label);
-    if (newLabel !== null) b.label = newLabel.trim();
-    saveBirthdays();
-    renderBirthdays();
-  }
+  editingBirthdayId = id;
+  editBirthdayNameInput.value = b.name;
+  editBirthdayLabelInput.value = b.label || '';
+  editBirthdayDateInput.value = b.date;
+  editBirthdayOverlay.classList.remove('hidden');
+  editBirthdayOverlay.setAttribute('aria-hidden', 'false');
+  editBirthdayNameInput.focus();
+}
+
+function closeEditBirthday() {
+  editingBirthdayId = null;
+  editBirthdayOverlay.classList.add('hidden');
+  editBirthdayOverlay.setAttribute('aria-hidden', 'true');
+}
+
+function editBirthday(id) {
+  openEditBirthday(id);
+}
+
+function saveEditBirthday() {
+  if (!editingBirthdayId) return;
+  const name = editBirthdayNameInput.value.trim();
+  const date = editBirthdayDateInput.value;
+  if (!name || !date) return;
+  const b = birthdays.find((x) => x.id === editingBirthdayId);
+  if (!b) return;
+  b.name = name;
+  b.label = editBirthdayLabelInput.value.trim();
+  b.date = date;
+  saveBirthdays();
+  renderBirthdays();
+  closeEditBirthday();
 }
 
 function renderBirthdays() {
@@ -771,6 +804,23 @@ birthdayForm.addEventListener('submit', (e) => {
   birthdayLabelInput.value = '';
   birthdayDateInput.value = '';
   birthdayNameInput.focus();
+});
+
+if (editBirthdayForm) {
+  editBirthdayForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    saveEditBirthday();
+  });
+}
+if (editBirthdayClose) editBirthdayClose.addEventListener('click', closeEditBirthday);
+if (editBirthdayCancel) editBirthdayCancel.addEventListener('click', closeEditBirthday);
+if (editBirthdayOverlay) {
+  editBirthdayOverlay.addEventListener('click', (e) => {
+    if (e.target === editBirthdayOverlay) closeEditBirthday();
+  });
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && editBirthdayOverlay && !editBirthdayOverlay.classList.contains('hidden')) closeEditBirthday();
 });
 
 /* ===== SECTION TABS ===== */

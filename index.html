@@ -206,6 +206,29 @@
         <p class="empty-title">No birthdays yet</p>
         <p class="empty-sub">Add family & friends above!</p>
       </div>
+
+      <!-- Edit birthday overlay -->
+      <div class="settings-overlay hidden" id="editBirthdayOverlay" aria-hidden="true">
+        <div class="settings-panel glass-card" id="editBirthdayPanel" role="dialog" aria-label="Edit birthday">
+          <div class="settings-header">
+            <h2 class="settings-title">Edit birthday</h2>
+            <button type="button" class="btn-icon btn-close-settings" id="editBirthdayClose" aria-label="Close">✕</button>
+          </div>
+          <form id="editBirthdayForm" class="settings-body">
+            <div class="birthday-form-row">
+              <input type="text" id="editBirthdayName" placeholder="Name" autocomplete="off" maxlength="80" required />
+              <input type="text" id="editBirthdayLabel" placeholder="e.g. Mom, Best friend" autocomplete="off" maxlength="40" />
+            </div>
+            <div class="birthday-form-row">
+              <input type="date" id="editBirthdayDate" title="Birthday (year doesn't matter)" required />
+            </div>
+            <div class="birthday-form-row">
+              <button type="button" class="btn-text-muted" id="editBirthdayCancel">Cancel</button>
+              <button type="submit" class="btn-primary btn-birthday">Update</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </section>
   </div>
 
