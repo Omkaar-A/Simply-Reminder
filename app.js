@@ -7,6 +7,13 @@ const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com';
 const STORAGE_KEY = 'reminders-app';
 const BIRTHDAYS_KEY = 'reminders-birthdays';
 const DARK_KEY = 'reminders-dark';
+const SETTINGS_KEYS = {
+  animatedBg: 'reminders-animated-bg',
+  confetti: 'reminders-confetti',
+  statsBar: 'reminders-stats-bar',
+  progressBar: 'reminders-progress-bar',
+  autoCalendar: 'reminders-auto-calendar',
+};
 
 /* ===== DOM ===== */
 const form = document.getElementById('addForm');
@@ -48,6 +55,11 @@ const settingsBtn = document.getElementById('settingsBtn');
 const settingsOverlay = document.getElementById('settingsOverlay');
 const settingsClose = document.getElementById('settingsClose');
 const settingsDarkModeToggle = document.getElementById('settingsDarkMode');
+const settingsAnimatedBg = document.getElementById('settingsAnimatedBg');
+const settingsConfetti = document.getElementById('settingsConfetti');
+const settingsStatsBar = document.getElementById('settingsStatsBar');
+const settingsProgressBar = document.getElementById('settingsProgressBar');
+const settingsAutoCalendar = document.getElementById('settingsAutoCalendar');
 
 /* ===== STATE ===== */
 let reminders = [];
@@ -157,11 +169,65 @@ function syncSettingsDarkModeUI() {
   }
 }
 
+/* ===== SETTINGS (TOGGLES) ===== */
+function getSetting(key, defaultValue = true) {
+  const raw = localStorage.getItem(SETTINGS_KEYS[key]);
+  if (raw === null) return defaultValue;
+  return raw === 'true';
+}
+
+function setSetting(key, value) {
+  localStorage.setItem(SETTINGS_KEYS[key], value);
+  applySetting(key, value);
+}
+
+function applySetting(key, value) {
+  switch (key) {
+    case 'animatedBg':
+      document.body.classList.toggle('no-animate-bg', !value);
+      break;
+    case 'statsBar':
+      document.querySelector('.stats-bar').classList.toggle('hidden', !value);
+      break;
+    case 'progressBar':
+      document.querySelector('.progress-bar-container').classList.toggle('hidden', !value);
+      break;
+    default:
+      break;
+  }
+}
+
+function loadSettings() {
+  const animatedBg = getSetting('animatedBg', true);
+  const statsBar = getSetting('statsBar', true);
+  const progressBar = getSetting('progressBar', true);
+  document.body.classList.toggle('no-animate-bg', !animatedBg);
+  document.querySelector('.stats-bar').classList.toggle('hidden', !statsBar);
+  document.querySelector('.progress-bar-container').classList.toggle('hidden', !progressBar);
+}
+
+function syncSettingsTogglesUI() {
+  const toggles = [
+    [settingsAnimatedBg, 'animatedBg'],
+    [settingsConfetti, 'confetti'],
+    [settingsStatsBar, 'statsBar'],
+    [settingsProgressBar, 'progressBar'],
+    [settingsAutoCalendar, 'autoCalendar'],
+  ];
+  toggles.forEach(([el, key]) => {
+    if (!el) return;
+    const on = getSetting(key, true);
+    el.setAttribute('aria-checked', on);
+    el.classList.toggle('on', on);
+  });
+}
+
 /* ===== SETTINGS ===== */
 function openSettings() {
   settingsOverlay.classList.remove('hidden');
   settingsOverlay.setAttribute('aria-hidden', 'false');
   syncSettingsDarkModeUI();
+  syncSettingsTogglesUI();
 }
 
 function closeSettings() {
@@ -185,6 +251,41 @@ document.querySelector('label[for="settingsDarkMode"]')?.addEventListener('click
   e.preventDefault();
   settingsDarkModeToggle.click();
 });
+
+function bindSettingsToggle(element, key) {
+  if (!element) return;
+  element.addEventListener('click', () => {
+    const next = !getSetting(key, true);
+    setSetting(key, next);
+    element.setAttribute('aria-checked', next);
+    element.classList.toggle('on', next);
+  });
+}
+document.querySelector('label[for="settingsAnimatedBg"]')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  settingsAnimatedBg?.click();
+});
+document.querySelector('label[for="settingsConfetti"]')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  settingsConfetti?.click();
+});
+document.querySelector('label[for="settingsStatsBar"]')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  settingsStatsBar?.click();
+});
+document.querySelector('label[for="settingsProgressBar"]')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  settingsProgressBar?.click();
+});
+document.querySelector('label[for="settingsAutoCalendar"]')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  settingsAutoCalendar?.click();
+});
+bindSettingsToggle(settingsAnimatedBg, 'animatedBg');
+bindSettingsToggle(settingsConfetti, 'confetti');
+bindSettingsToggle(settingsStatsBar, 'statsBar');
+bindSettingsToggle(settingsProgressBar, 'progressBar');
+bindSettingsToggle(settingsAutoCalendar, 'autoCalendar');
 
 /* ===== HELPERS ===== */
 function escapeHtml(str) {
@@ -438,8 +539,8 @@ function addReminder(text, note, dueDate, category, priority) {
   reminders.unshift(reminder);
   saveReminders();
 
-  // Auto-add to Google Calendar if signed in and has a date
-  if (googleToken && reminder.dueDate) {
+  // Auto-add to Google Calendar if signed in, has a date, and setting is on
+  if (googleToken && reminder.dueDate && getSetting('autoCalendar', true)) {
     addToGoogleCalendar(reminder);
   }
 
@@ -450,7 +551,7 @@ function toggleDone(id) {
   const r = reminders.find((x) => x.id === id);
   if (r) {
     r.done = !r.done;
-    if (r.done) launchConfetti();
+    if (r.done && getSetting('confetti', true)) launchConfetti();
     saveReminders();
     render();
   }
@@ -621,6 +722,7 @@ tabBirthdays.addEventListener('click', () => showSection('birthdays'));
 /* ===== INIT ===== */
 updateGreeting();
 loadDarkMode();
+loadSettings();
 loadReminders();
 loadBirthdays();
 render();

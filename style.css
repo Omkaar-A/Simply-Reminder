@@ -60,6 +60,11 @@ body.dark {
   animation: bgShift 18s ease infinite;
 }
 
+body.no-animate-bg {
+  animation: none;
+  background-size: 100% 100%;
+}
+
 .app {
   max-width: 520px;
   margin: 0 auto;
