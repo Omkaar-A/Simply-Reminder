@@ -235,8 +235,14 @@ function applySetting(key, value) {
       document.querySelector('.progress-bar-container').classList.toggle('hidden', !value);
       break;
     case 'autoAppearance':
-      if (value) updateAppearanceByTime();
-      else darkModeToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+      if (value) {
+        // Keep current theme when turning on; only update the header icon to match time
+        const { icon } = getAppearanceByTime();
+        darkModeToggle.textContent = icon;
+        syncSettingsDarkModeUI();
+      } else {
+        darkModeToggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+      }
       break;
     default:
       break;
