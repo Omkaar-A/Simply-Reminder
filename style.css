@@ -42,6 +42,13 @@ body.dark {
   100% { background-position: 0% 50%; }
 }
 
+@keyframes bgShiftDark {
+  0% { background-position: 0% 50%; }
+  33% { background-position: 100% 0%; }
+  66% { background-position: 50% 100%; }
+  100% { background-position: 0% 50%; }
+}
+
 body {
   min-height: 100vh;
   font-family: "Inter", system-ui, -apple-system, sans-serif;
@@ -55,9 +62,19 @@ body {
 }
 
 body.dark {
-  background: linear-gradient(135deg, #0f0d18 0%, #1a1535 25%, #16213e 50%, #1a1535 75%, #0f0d18 100%);
-  background-size: 400% 400%;
-  animation: bgShift 18s ease infinite;
+  background: linear-gradient(
+    135deg,
+    #0d0b1a 0%,
+    #1a0a2e 15%,
+    #0e1a3a 30%,
+    #0a2a1a 45%,
+    #1a0e2e 60%,
+    #0a1a2e 75%,
+    #1a0a1e 90%,
+    #0d0b1a 100%
+  );
+  background-size: 600% 600%;
+  animation: bgShiftDark 24s ease infinite;
 }
 
 body.no-animate-bg {
