@@ -342,43 +342,6 @@ bindSettingsToggle(settingsProgressBar, 'progressBar');
 bindSettingsToggle(settingsAutoCalendar, 'autoCalendar');
 bindSettingsToggle(settingsAutoAppearance, 'autoAppearance', false);
 
-const copySetupInstructionsBtn = document.getElementById('copySetupInstructionsBtn');
-const SETUP_EMAIL_TEXT = `Subject: Quick setup for Simply Reminder (Google Calendar sign-in)
-
-Hi Dad,
-
-I'm using an app called Simply Reminder and I need "Sign in with Google" to work so I can add reminders to my calendar. That needs a one-time setup in Google Cloud with your account (I can't do it with my kids account). Can you do these steps and then send me the Client ID at the end?
-
-1. Open Google Cloud Console: https://console.cloud.google.com (sign in with your Google account).
-
-2. Create a project: Click "Select a project" → "New Project". Name it something like "Simply Reminder". Click Create.
-
-3. Enable the Calendar API: In the left menu go to APIs & Services → Library. Search for "Google Calendar API", open it, and click Enable.
-
-4. Create credentials: Go to APIs & Services → Credentials. Click "Create Credentials" → "OAuth client ID". If it asks you to set up the OAuth consent screen first, choose External, add an app name (e.g. "Simply Reminder"), and save. For Application type choose "Web application". Under "Authorized JavaScript origins" click Add URI and add the URL where my app runs — if it's on GitHub Pages use: https://YOUR-GITHUB-USERNAME.github.io/Simply-Reminder/ (replace YOUR-GITHUB-USERNAME with my GitHub username), or if I'm testing locally use: http://localhost:8000 (ask me for the exact URL). Click Create.
-
-5. Copy the Client ID from the popup (it's a long string ending in .apps.googleusercontent.com) and email it to me. I'll paste it into the app and then "Sign in with Google" will work. Only you had to do this once; I'll just sign in with my own Google account in the app.
-
-Thanks!`;
-
-if (copySetupInstructionsBtn) {
-  copySetupInstructionsBtn.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(SETUP_EMAIL_TEXT);
-      const label = copySetupInstructionsBtn.textContent;
-      copySetupInstructionsBtn.textContent = 'Copied!';
-      copySetupInstructionsBtn.disabled = true;
-      setTimeout(() => {
-        copySetupInstructionsBtn.textContent = label;
-        copySetupInstructionsBtn.disabled = false;
-      }, 2000);
-    } catch {
-      copySetupInstructionsBtn.textContent = 'Copy failed';
-      setTimeout(() => { copySetupInstructionsBtn.textContent = 'Copy email for Dad'; }, 2000);
-    }
-  });
-}
-
 /* ===== HELPERS ===== */
 function escapeHtml(str) {
   const div = document.createElement('div');
