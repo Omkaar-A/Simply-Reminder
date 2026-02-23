@@ -136,11 +136,14 @@ function getBirthdayLabel(days) {
 
 /* ===== GREETING ===== */
 function updateGreeting() {
-  const h = new Date().getHours();
-  let msg = 'Good evening 🌙';
+  const d = new Date();
+  const h = d.getHours();
+  const totalMins = h * 60 + d.getMinutes();
+  let msg = 'Good night 🌙';
   if (h < 5) msg = 'Up late? 🌟';
   else if (h < 12) msg = 'Good morning ☀️';
   else if (h < 17) msg = 'Good afternoon 🌤️';
+  else if (totalMins < 19 * 60 + 1) msg = 'Good evening 🌆';
   greetingEl.textContent = msg;
 }
 
