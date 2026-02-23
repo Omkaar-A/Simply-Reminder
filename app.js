@@ -60,6 +60,7 @@ const settingsConfetti = document.getElementById('settingsConfetti');
 const settingsStatsBar = document.getElementById('settingsStatsBar');
 const settingsProgressBar = document.getElementById('settingsProgressBar');
 const settingsAutoCalendar = document.getElementById('settingsAutoCalendar');
+const googleSetupWrap = document.getElementById('googleSetupWrap');
 
 /* ===== STATE ===== */
 let reminders = [];
@@ -228,6 +229,10 @@ function openSettings() {
   settingsOverlay.setAttribute('aria-hidden', 'false');
   syncSettingsDarkModeUI();
   syncSettingsTogglesUI();
+  // Show Google Calendar setup steps only when Client ID is not configured
+  if (googleSetupWrap) {
+    googleSetupWrap.classList.toggle('hidden', !GOOGLE_CLIENT_ID.startsWith('YOUR_'));
+  }
 }
 
 function closeSettings() {

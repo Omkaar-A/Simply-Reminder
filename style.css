@@ -217,6 +217,51 @@ body.no-animate-bg {
   transition: transform 0.25s;
 }
 
+.settings-setup-wrap {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--glass-border);
+}
+.settings-setup-intro {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+.settings-setup-list {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0 0 0.75rem 1.1rem;
+  line-height: 1.5;
+}
+.settings-setup-list li {
+  margin-bottom: 0.35rem;
+}
+.settings-setup-list code {
+  font-size: 0.8em;
+  background: var(--accent-soft);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  color: var(--text);
+}
+.settings-setup-list a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.settings-setup-list a:hover {
+  text-decoration: underline;
+}
+.settings-setup-link {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  margin-top: 0.25rem;
+}
+.settings-setup-link:hover {
+  text-decoration: underline;
+}
+
 /* ===== GLASS CARD ===== */
 .glass-card {
   background: var(--glass);
