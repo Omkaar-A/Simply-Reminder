@@ -1079,7 +1079,7 @@ body.dark .edit-reminder-form .edit-reminder-field:nth-child(5) label {
 }
 
 .edit-reminder-form .edit-reminder-field input[type="date"] {
-  padding: 0.75rem 0.65rem 0.75rem 1rem;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
   border: 2px solid var(--glass-border);
   border-radius: var(--radius-sm);
   font: inherit;
@@ -1242,69 +1242,104 @@ input[type="date"] {
   cursor: pointer;
 }
 
+/* Hide native date picker icons across all browsers */
 input[type="date"]::-webkit-calendar-picker-indicator {
-  width: 18px;
-  height: 18px;
-  padding: 4px;
-  margin-left: 4px;
-  border-radius: 8px;
-  background-color: var(--accent-soft);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236c5ce7' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='3' ry='3'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 14px 14px;
-  opacity: 0.85;
-  cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  display: none;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  background-color: rgba(108, 92, 231, 0.28);
-  opacity: 1;
-  transform: scale(1.15);
+/* Firefox specific: hide native date picker icon */
+input[type="date"]::-moz-calendar-picker-indicator {
+  display: none;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+}
+
+/* Date input wrapper for custom calendar button */
+.date-input-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.date-input-wrapper input[type="date"] {
+  padding-right: 2.25rem;
+}
+
+/* Custom calendar button */
+.date-picker-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  z-index: 1;
+}
+
+.date-picker-btn:hover {
+  background: rgba(108, 92, 231, 0.28);
+  transform: translateY(-50%) scale(1.1);
   box-shadow: 0 2px 8px rgba(108, 92, 231, 0.25);
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator:active {
-  transform: scale(0.95);
-  background-color: rgba(108, 92, 231, 0.38);
-  box-shadow: 0 1px 4px rgba(108, 92, 231, 0.2);
+.date-picker-btn:active {
+  transform: translateY(-50%) scale(0.95);
+  background: rgba(108, 92, 231, 0.38);
 }
 
-input[type="date"]:focus::-webkit-calendar-picker-indicator {
-  background-color: rgba(108, 92, 231, 0.22);
-  opacity: 1;
+.date-picker-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent);
 }
 
-body.dark input[type="date"]::-webkit-calendar-picker-indicator {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a29bfe' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='3' ry='3'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
-  background-color: rgba(162, 155, 254, 0.18);
-  opacity: 0.9;
+body.dark .date-picker-btn {
+  background: rgba(162, 155, 254, 0.18);
+  color: #a29bfe;
 }
 
-body.dark input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  background-color: rgba(162, 155, 254, 0.32);
+body.dark .date-picker-btn:hover {
+  background: rgba(162, 155, 254, 0.32);
   box-shadow: 0 2px 8px rgba(162, 155, 254, 0.25);
 }
 
-body.dark input[type="date"]::-webkit-calendar-picker-indicator:active {
-  background-color: rgba(162, 155, 254, 0.42);
+body.dark .date-picker-btn:active {
+  background: rgba(162, 155, 254, 0.42);
 }
 
 #dueDate {
-  padding: 0.5rem 0.55rem 0.5rem 0.65rem;
+  padding: 0.5rem 2.5rem 0.5rem 0.65rem;
   display: flex;
   align-items: center;
 }
 
 #birthdayDate {
-  padding: 0.6rem 0.55rem 0.6rem 0.9rem;
+  padding: 0.6rem 2.5rem 0.6rem 0.9rem;
   display: flex;
   align-items: center;
 }
 
 .edit-birthday-form #editBirthdayDate {
-  padding: 0.75rem 0.65rem 0.75rem 1rem;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
   display: flex;
   align-items: center;
 }
