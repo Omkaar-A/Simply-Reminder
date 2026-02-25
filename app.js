@@ -55,6 +55,16 @@ const editBirthdayLabelInput = document.getElementById('editBirthdayLabel');
 const editBirthdayDateInput = document.getElementById('editBirthdayDate');
 const editBirthdayClose = document.getElementById('editBirthdayClose');
 const editBirthdayCancel = document.getElementById('editBirthdayCancel');
+const editReminderOverlay = document.getElementById('editReminderOverlay');
+const editReminderForm = document.getElementById('editReminderForm');
+const editReminderTextInput = document.getElementById('editReminderText');
+const editReminderNoteInput = document.getElementById('editReminderNote');
+const editReminderDueDateInput = document.getElementById('editReminderDueDate');
+const editReminderPriorityInput = document.getElementById('editReminderPriority');
+const editReminderClose = document.getElementById('editReminderClose');
+const editReminderCancel = document.getElementById('editReminderCancel');
+const editCategoryPicker = document.getElementById('editCategoryPicker');
+const editCategoryBtns = editCategoryPicker ? editCategoryPicker.querySelectorAll('.cat-btn') : [];
 const tabReminders = document.getElementById('tabReminders');
 const tabBirthdays = document.getElementById('tabBirthdays');
 const remindersSection = document.getElementById('remindersSection');
@@ -76,6 +86,8 @@ let birthdays = [];
 let currentFilter = 'all';
 let searchQuery = '';
 let selectedCategory = '';
+let editingReminderId = null;
+let selectedEditCategory = '';
 
 /* ===== LOAD / SAVE ===== */
 function loadReminders() {
@@ -639,15 +651,55 @@ function remove(id) {
   render();
 }
 
-function editReminder(id) {
+function openEditReminder(id) {
   const r = reminders.find((x) => x.id === id);
   if (!r) return;
-  const newText = prompt('Edit reminder:', r.text);
-  if (newText !== null && newText.trim()) {
-    r.text = newText.trim();
-    saveReminders();
-    render();
-  }
+  editingReminderId = id;
+  selectedEditCategory = r.category || '';
+  
+  if (editReminderTextInput) editReminderTextInput.value = r.text;
+  if (editReminderNoteInput) editReminderNoteInput.value = r.note || '';
+  if (editReminderDueDateInput) editReminderDueDateInput.value = r.dueDate || '';
+  if (editReminderPriorityInput) editReminderPriorityInput.value = r.priority || 'normal';
+  
+  // Set category buttons
+  editCategoryBtns.forEach((btn) => {
+    btn.classList.toggle('selected', btn.dataset.cat === selectedEditCategory);
+  });
+  
+  editReminderOverlay.classList.remove('hidden');
+  editReminderOverlay.setAttribute('aria-hidden', 'false');
+  if (editReminderTextInput) editReminderTextInput.focus();
+}
+
+function closeEditReminder() {
+  editingReminderId = null;
+  selectedEditCategory = '';
+  editReminderOverlay.classList.add('hidden');
+  editReminderOverlay.setAttribute('aria-hidden', 'true');
+}
+
+function saveEditReminder() {
+  if (!editingReminderId) return;
+  const text = editReminderTextInput ? editReminderTextInput.value.trim() : '';
+  if (!text) return;
+  
+  const r = reminders.find((x) => x.id === editingReminderId);
+  if (!r) return;
+  
+  r.text = text;
+  r.note = editReminderNoteInput ? editReminderNoteInput.value.trim() : '';
+  r.dueDate = editReminderDueDateInput ? editReminderDueDateInput.value || null : null;
+  r.category = selectedEditCategory;
+  r.priority = editReminderPriorityInput ? editReminderPriorityInput.value : 'normal';
+  
+  saveReminders();
+  render();
+  closeEditReminder();
+}
+
+function editReminder(id) {
+  openEditReminder(id);
 }
 
 function clearDone() {
@@ -832,8 +884,42 @@ if (editBirthdayOverlay) {
     if (e.target === editBirthdayOverlay) closeEditBirthday();
   });
 }
+
+/* ===== EDIT REMINDER DIALOG EVENTS ===== */
+if (editReminderForm) {
+  editReminderForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    saveEditReminder();
+  });
+}
+if (editReminderClose) editReminderClose.addEventListener('click', closeEditReminder);
+if (editReminderCancel) editReminderCancel.addEventListener('click', closeEditReminder);
+if (editReminderOverlay) {
+  editReminderOverlay.addEventListener('click', (e) => {
+    if (e.target === editReminderOverlay) closeEditReminder();
+  });
+}
+
+/* ===== EDIT CATEGORY PICKER ===== */
+editCategoryBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const cat = btn.dataset.cat;
+    if (selectedEditCategory === cat) {
+      selectedEditCategory = '';
+      btn.classList.remove('selected');
+    } else {
+      editCategoryBtns.forEach((b) => b.classList.remove('selected'));
+      selectedEditCategory = cat;
+      btn.classList.add('selected');
+    }
+  });
+});
+
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && editBirthdayOverlay && !editBirthdayOverlay.classList.contains('hidden')) closeEditBirthday();
+  if (e.key === 'Escape') {
+    if (editBirthdayOverlay && !editBirthdayOverlay.classList.contains('hidden')) closeEditBirthday();
+    if (editReminderOverlay && !editReminderOverlay.classList.contains('hidden')) closeEditReminder();
+  }
 });
 
 /* ===== SECTION TABS ===== */

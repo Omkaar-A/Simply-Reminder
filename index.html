@@ -92,6 +92,54 @@
       </div>
     </div>
 
+    <!-- Edit reminder popup (outside section so it always shows on top) -->
+    <div class="edit-reminder-overlay hidden" id="editReminderOverlay" aria-hidden="true">
+      <div class="edit-reminder-panel glass-card" id="editReminderPanel" role="dialog" aria-label="Edit reminder">
+        <div class="edit-reminder-header">
+          <span class="edit-reminder-icon">✏️</span>
+          <h2 class="edit-reminder-title">Edit reminder</h2>
+          <button type="button" class="btn-icon edit-reminder-close" id="editReminderClose" aria-label="Close">✕</button>
+        </div>
+        <form id="editReminderForm" class="edit-reminder-form">
+          <div class="edit-reminder-field">
+            <label for="editReminderText">Reminder</label>
+            <input type="text" id="editReminderText" placeholder="What do you need to remember?" autocomplete="off" maxlength="200" required />
+          </div>
+          <div class="edit-reminder-field">
+            <label for="editReminderNote">Note</label>
+            <textarea id="editReminderNote" placeholder="Add a note (optional)" rows="2" maxlength="500"></textarea>
+          </div>
+          <div class="edit-reminder-field">
+            <label for="editReminderDueDate">Due date</label>
+            <input type="date" id="editReminderDueDate" title="Due date" />
+          </div>
+          <div class="edit-reminder-field">
+            <label>Category</label>
+            <div class="category-picker" id="editCategoryPicker">
+              <button type="button" class="cat-btn" data-cat="📚" title="School">📚</button>
+              <button type="button" class="cat-btn" data-cat="🏠" title="Home">🏠</button>
+              <button type="button" class="cat-btn" data-cat="🎮" title="Fun">🎮</button>
+              <button type="button" class="cat-btn" data-cat="🏃" title="Sports">🏃</button>
+              <button type="button" class="cat-btn" data-cat="🎵" title="Music">🎵</button>
+              <button type="button" class="cat-btn" data-cat="⭐" title="Important">⭐</button>
+            </div>
+          </div>
+          <div class="edit-reminder-field">
+            <label for="editReminderPriority">Priority</label>
+            <select id="editReminderPriority" title="Priority">
+              <option value="normal">⚪ Normal</option>
+              <option value="low">🟢 Low</option>
+              <option value="high">🔴 High</option>
+            </select>
+          </div>
+          <div class="edit-reminder-actions">
+            <button type="button" class="btn-edit-cancel" id="editReminderCancel">Cancel</button>
+            <button type="submit" class="btn-primary btn-edit-update">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- Edit birthday popup (outside section so it always shows on top) -->
     <div class="edit-birthday-overlay hidden" id="editBirthdayOverlay" aria-hidden="true">
       <div class="edit-birthday-panel glass-card" id="editBirthdayPanel" role="dialog" aria-label="Edit birthday">
