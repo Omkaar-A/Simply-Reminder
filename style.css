@@ -1237,12 +1237,16 @@ body.dark .edit-reminder-actions .btn-edit-cancel:hover {
 }
 
 /* ===== DATE INPUT CALENDAR ICON ===== */
+/* Hide native date picker icons so only custom calendar button shows */
 input[type="date"] {
   position: relative;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
 }
 
-/* Hide native date picker icons across all browsers */
+/* WebKit: hide calendar picker indicator */
 input[type="date"]::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
@@ -1254,14 +1258,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
 }
 
-/* Firefox specific: hide native date picker icon */
-input[type="date"]::-moz-calendar-picker-indicator {
+/* WebKit: hide inner spin button (for datetime-local, time inputs) */
+input[type="date"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
   display: none;
-  width: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
+}
+
+/* WebKit: hide clear button */
+input[type="date"]::-webkit-clear-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
 }
 
 /* Date input wrapper for custom calendar button */
