@@ -111,7 +111,12 @@
           </div>
           <div class="edit-reminder-field">
             <label for="editReminderDueDate">Due date</label>
-            <input type="date" id="editReminderDueDate" title="Due date" />
+            <div class="date-input-wrapper">
+              <input type="date" id="editReminderDueDate" title="Due date" />
+              <button type="button" class="date-picker-btn" aria-label="Open calendar" tabindex="-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </button>
+            </div>
           </div>
           <div class="edit-reminder-field">
             <label>Category</label>
@@ -159,7 +164,12 @@
           </div>
           <div class="edit-birthday-field">
             <label for="editBirthdayDate">Birthday</label>
-            <input type="date" id="editBirthdayDate" title="Year doesn't matter" required />
+            <div class="date-input-wrapper">
+              <input type="date" id="editBirthdayDate" title="Year doesn't matter" required />
+              <button type="button" class="date-picker-btn" aria-label="Open calendar" tabindex="-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </button>
+            </div>
           </div>
           <div class="edit-birthday-actions">
             <button type="button" class="btn-edit-cancel" id="editBirthdayCancel">Cancel</button>
@@ -215,8 +225,13 @@
         <input type="text" id="reminderInput" placeholder="What do you need to remember?" autocomplete="off" maxlength="200" />
         <textarea id="noteInput" placeholder="Add a note (optional)" rows="2" maxlength="500"></textarea>
         <div class="form-row">
-          <input type="date" id="dueDate" title="Due date" />
-          <div class="category-picker" id="categoryPicker">
+            <div class="date-input-wrapper">
+              <input type="date" id="dueDate" title="Due date" />
+              <button type="button" class="date-picker-btn" aria-label="Open calendar" tabindex="-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </button>
+            </div>
+            <div class="category-picker" id="categoryPicker">
             <button type="button" class="cat-btn" data-cat="📚" title="School">📚</button>
             <button type="button" class="cat-btn" data-cat="🏠" title="Home">🏠</button>
             <button type="button" class="cat-btn" data-cat="🎮" title="Fun">🎮</button>
@@ -272,7 +287,12 @@
             <input type="text" id="birthdayLabel" placeholder="e.g. Mom, Best friend" autocomplete="off" maxlength="40" />
           </div>
           <div class="birthday-form-row">
-            <input type="date" id="birthdayDate" title="Birthday (year doesn't matter)" required />
+            <div class="date-input-wrapper">
+              <input type="date" id="birthdayDate" title="Birthday (year doesn't matter)" required />
+              <button type="button" class="date-picker-btn" aria-label="Open calendar" tabindex="-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </button>
+            </div>
             <button type="submit" class="btn-primary btn-birthday">Add birthday</button>
           </div>
         </form>

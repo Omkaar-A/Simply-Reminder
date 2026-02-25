@@ -943,3 +943,25 @@ setInterval(updateAppearanceByTime, 60000);
 loadBirthdays();
 render();
 renderBirthdays();
+
+/* ===== CUSTOM DATE PICKER BUTTON ===== */
+function initDatePickerButtons() {
+  document.querySelectorAll('.date-picker-btn').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const input = btn.closest('.date-input-wrapper')?.querySelector('input[type="date"]');
+      if (input) {
+        input.focus();
+        if ('showPicker' in input) {
+          try {
+            input.showPicker();
+          } catch {
+            // showPicker() may fail if the input is not focusable
+          }
+        }
+      }
+    });
+  });
+}
+
+initDatePickerButtons();
