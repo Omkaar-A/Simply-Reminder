@@ -1236,118 +1236,35 @@ body.dark .edit-reminder-actions .btn-edit-cancel:hover {
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
-/* ===== DATE INPUT CALENDAR ICON ===== */
-/* Hide native date picker icons across all browsers so only custom calendar button shows */
-input[type="date"] {
-  position: relative;
-  cursor: pointer;
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
-  appearance: none;
-}
-
-/* WebKit browsers (Chrome, Safari, Edge): hide calendar picker indicator */
-input[type="date"]::-webkit-calendar-picker-indicator {
-  display: none !important;
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-}
-
-/* WebKit: hide inner spin button */
-input[type="date"]::-webkit-inner-spin-button {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  display: none !important;
-  margin: 0 !important;
-}
-
-/* WebKit: hide clear button */
-input[type="date"]::-webkit-clear-button {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  display: none !important;
-  margin: 0 !important;
-}
-
-/* Firefox: fully hide the native calendar picker indicator */
-input[type="date"]::-moz-calendar-picker-indicator {
-  display: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-  width: 0 !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  border: none !important;
-  background: transparent !important;
-}
-
-/* Firefox: suppress the datetime placeholder pseudo-element */
-input[type="date"]::-webkit-datetime-edit {
-  -moz-appearance: none !important;
-}
-
-/* Firefox: hide the datetime fields wrapper to prevent native icon space */
-input[type="date"]::-moz-placeholder {
-  -moz-appearance: none !important;
-}
-
-/* Firefox: remove dropdown arrow and any native chrome */
-input[type="date"]::-moz-focus-inner {
-  border: 0;
-  padding: 0;
-}
-
-/* Firefox: ensure textfield appearance suppresses date picker chrome entirely */
-@supports (-moz-appearance: textfield) {
-  input[type="date"] {
-    -moz-appearance: textfield !important;
-    background: transparent;
-  }
-}
-
-/* Firefox: additional reset for date input appearance - remove validation glow */
-input[type="date"]:-moz-ui-invalid {
-  box-shadow: none;
-}
-
-/* Firefox: remove any residual native indicator space */
-input[type="date"]::-moz-focus-outer {
-  border: 0;
-}
-
-/* Edge Legacy: hide clear button */
-input[type="date"]::-ms-clear {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-/* Edge Legacy: hide reveal button */
-input[type="date"]::-ms-reveal {
-  display: none !important;
-}
-
-/* Date input wrapper for custom calendar button */
+/* ===== DATE INPUT STYLES ===== */
+/* Custom date input wrapper for custom calendar button */
 .date-input-wrapper {
   position: relative;
   display: inline-flex;
   align-items: center;
 }
 
-/* Ensure input padding accommodates the custom button */
-.date-input-wrapper input[type="date"] {
-  padding-right: 2.25rem;
+/* Date input styling */
+.date-input-wrapper input[type="text"] {
+  padding: 0.5rem 2.5rem 0.5rem 0.65rem;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.82rem;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.date-input-wrapper input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.date-input-wrapper input[type="text"]::placeholder {
+  color: var(--text-muted);
 }
 
 /* Custom calendar button */
@@ -1401,22 +1318,294 @@ body.dark .date-picker-btn:active {
   background: rgba(162, 155, 254, 0.42);
 }
 
-#dueDate {
-  padding: 0.5rem 2.5rem 0.5rem 0.65rem;
+/* Clear date button */
+.date-clear-btn {
+  position: absolute;
+  right: 36px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 107, 107, 0.15);
+  color: var(--red);
+  cursor: pointer;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  transition: background-color 0.2s, transform 0.2s;
+  z-index: 1;
+}
+
+.date-clear-btn:hover {
+  background: rgba(255, 107, 107, 0.3);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.date-clear-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--red);
+}
+
+.date-clear-btn.hidden {
+  display: none !important;
+}
+
+/* ===== CUSTOM DATE PICKER CALENDAR ===== */
+.date-picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+.date-picker-overlay.hidden { display: none !important; }
+
+.date-picker-calendar {
+  width: 100%;
+  max-width: 320px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow), 0 24px 48px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.25s ease;
+}
+body.dark .date-picker-calendar {
+  box-shadow: var(--shadow), 0 24px 48px rgba(0, 0, 0, 0.5);
+}
+
+.date-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(0, 206, 201, 0.1));
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.date-picker-nav {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.date-picker-nav:hover {
+  background: rgba(108, 92, 231, 0.28);
+  transform: scale(1.1);
+}
+
+.date-picker-nav:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+body.dark .date-picker-nav {
+  background: rgba(162, 155, 254, 0.18);
+  color: #a29bfe;
+}
+
+body.dark .date-picker-nav:hover {
+  background: rgba(162, 155, 254, 0.32);
+}
+
+.date-picker-title {
+  display: flex;
+  gap: 0.5rem;
   align-items: center;
 }
 
-#birthdayDate {
-  padding: 0.6rem 2.5rem 0.6rem 0.9rem;
-  display: flex;
-  align-items: center;
+.date-picker-month-select,
+.date-picker-year-select {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--glass);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s;
 }
 
-.edit-birthday-form #editBirthdayDate {
+.date-picker-month-select:focus,
+.date-picker-year-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.date-picker-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 0.75rem 0.5rem 0.5rem;
+  background: var(--glass);
+}
+
+.date-picker-weekdays span {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.date-picker-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 0.5rem;
+  background: var(--glass);
+}
+
+.date-picker-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s, color 0.15s;
+}
+
+.date-picker-day.empty {
+  background: transparent;
+  cursor: default;
+}
+
+.date-picker-day:not(.empty):hover {
+  background: var(--accent-soft);
+  transform: scale(1.1);
+}
+
+.date-picker-day.today {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.date-picker-day.selected {
+  background: linear-gradient(135deg, var(--accent), #a29bfe);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+}
+
+.date-picker-day:not(.empty):focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+body.dark .date-picker-day.today {
+  background: rgba(162, 155, 254, 0.25);
+  color: #a29bfe;
+}
+
+.date-picker-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--glass-border);
+  background: var(--glass);
+}
+
+.date-picker-today,
+.date-picker-close {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.date-picker-today {
+  background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+  color: #fff;
+}
+
+.date-picker-today:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+}
+
+.date-picker-close {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.date-picker-close:hover {
+  background: rgba(108, 92, 231, 0.25);
+}
+
+.date-picker-today:focus,
+.date-picker-close:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+body.dark .date-picker-close {
+  background: rgba(162, 155, 254, 0.18);
+  color: #a29bfe;
+}
+
+body.dark .date-picker-close:hover {
+  background: rgba(162, 155, 254, 0.28);
+}
+
+/* Form-specific date input sizing */
+#dueDateWrapper input[type="text"] {
+  min-width: 110px;
+}
+
+#birthdayDateWrapper input[type="text"] {
+  min-width: 120px;
+}
+
+#editReminderDueDateWrapper input[type="text"],
+#editBirthdayDateWrapper input[type="text"] {
+  width: 100%;
   padding: 0.75rem 2.5rem 0.75rem 1rem;
-  display: flex;
-  align-items: center;
+  font-size: 0.95rem;
+  border: 2px solid var(--glass-border);
+  background: var(--bg);
+}
+
+#editReminderDueDateWrapper input[type="text"]:focus {
+  border-color: #0984e3;
+  box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.2);
+}
+
+#editBirthdayDateWrapper input[type="text"]:focus {
+  border-color: #00b894;
+  box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -1436,6 +1625,19 @@ body.dark .date-picker-btn:active {
     padding: 1rem;
   }
   .edit-reminder-form #editCategoryPicker {
+    justify-content: center;
+  }
+  .date-picker-calendar {
+    max-width: 290px;
+  }
+  .date-picker-day {
+    font-size: 0.8rem;
+  }
+  .date-picker-weekdays span {
+    font-size: 0.65rem;
+  }
+  .date-picker-title {
+    flex-wrap: wrap;
     justify-content: center;
   }
 }

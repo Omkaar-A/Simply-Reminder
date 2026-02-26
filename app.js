@@ -659,8 +659,17 @@ function openEditReminder(id) {
   
   if (editReminderTextInput) editReminderTextInput.value = r.text;
   if (editReminderNoteInput) editReminderNoteInput.value = r.note || '';
-  if (editReminderDueDateInput) editReminderDueDateInput.value = r.dueDate || '';
+  if (editReminderDueDateInput) {
+    editReminderDueDateInput.value = r.dueDate ? new Date(r.dueDate + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+    editReminderDueDateInput.dataset.value = r.dueDate || '';
+  }
   if (editReminderPriorityInput) editReminderPriorityInput.value = r.priority || 'normal';
+
+  // Update clear button visibility
+  const clearBtn = document.querySelector('#editReminderDueDateWrapper .date-clear-btn');
+  if (clearBtn) {
+    clearBtn.classList.toggle('hidden', !r.dueDate);
+  }
   
   // Set category buttons
   editCategoryBtns.forEach((btn) => {
@@ -689,7 +698,7 @@ function saveEditReminder() {
   
   r.text = text;
   r.note = editReminderNoteInput ? editReminderNoteInput.value.trim() : '';
-  r.dueDate = editReminderDueDateInput ? editReminderDueDateInput.value || null : null;
+  r.dueDate = editReminderDueDateInput ? editReminderDueDateInput.dataset.value || null : null;
   r.category = selectedEditCategory;
   r.priority = editReminderPriorityInput ? editReminderPriorityInput.value : 'normal';
   
@@ -747,7 +756,11 @@ function openEditBirthday(id) {
   editingBirthdayId = id;
   if (editBirthdayNameInput) editBirthdayNameInput.value = b.name;
   if (editBirthdayLabelInput) editBirthdayLabelInput.value = b.label || '';
-  if (editBirthdayDateInput) editBirthdayDateInput.value = toYYYYMMDD(b.date);
+  if (editBirthdayDateInput) {
+    const dateStr = toYYYYMMDD(b.date);
+    editBirthdayDateInput.value = dateStr ? new Date(dateStr + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+    editBirthdayDateInput.dataset.value = dateStr;
+  }
   editBirthdayOverlay.classList.remove('hidden');
   editBirthdayOverlay.setAttribute('aria-hidden', 'false');
   if (editBirthdayNameInput) editBirthdayNameInput.focus();
@@ -766,7 +779,7 @@ function editBirthday(id) {
 function saveEditBirthday() {
   if (!editingBirthdayId) return;
   const name = editBirthdayNameInput ? editBirthdayNameInput.value.trim() : '';
-  const date = editBirthdayDateInput ? editBirthdayDateInput.value.trim() : '';
+  const date = editBirthdayDateInput ? editBirthdayDateInput.dataset.value.trim() : '';
   if (!name || !date) return;
   const b = birthdays.find((x) => x.id === editingBirthdayId);
   if (!b) return;
@@ -831,12 +844,15 @@ form.addEventListener('submit', (e) => {
   e.preventDefault();
   const text = input.value.trim();
   const note = noteInput.value.trim();
-  const due = dueDateInput.value || null;
+  const due = dueDateInput.dataset.value || null;
   const priority = prioritySelect.value;
   addReminder(text, note, due, selectedCategory, priority);
   input.value = '';
   noteInput.value = '';
   dueDateInput.value = '';
+  dueDateInput.dataset.value = '';
+  const clearBtn = document.querySelector('#dueDateWrapper .date-clear-btn');
+  if (clearBtn) clearBtn.classList.add('hidden');
   prioritySelect.value = 'normal';
   selectedCategory = '';
   categoryBtns.forEach((b) => b.classList.remove('selected'));
@@ -863,11 +879,12 @@ birthdayForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const name = birthdayNameInput.value.trim();
   const label = birthdayLabelInput.value.trim();
-  const date = birthdayDateInput.value;
+  const date = birthdayDateInput.dataset.value;
   addBirthday(name, label, date);
   birthdayNameInput.value = '';
   birthdayLabelInput.value = '';
   birthdayDateInput.value = '';
+  birthdayDateInput.dataset.value = '';
   birthdayNameInput.focus();
 });
 
@@ -944,24 +961,233 @@ loadBirthdays();
 render();
 renderBirthdays();
 
-/* ===== CUSTOM DATE PICKER BUTTON ===== */
+/* ===== CUSTOM DATE PICKER ===== */
+const datePickerOverlay = document.getElementById('datePickerOverlay');
+const datePickerCalendar = document.getElementById('datePickerCalendar');
+const datePickerDays = document.getElementById('datePickerDays');
+const datePickerMonth = document.getElementById('datePickerMonth');
+const datePickerYear = document.getElementById('datePickerYear');
+const datePickerPrevMonth = document.getElementById('datePickerPrevMonth');
+const datePickerNextMonth = document.getElementById('datePickerNextMonth');
+const datePickerToday = document.getElementById('datePickerToday');
+const datePickerClose = document.getElementById('datePickerClose');
+
+let datePickerCurrentDate = new Date();
+let datePickerCurrentInput = null;
+let datePickerCurrentWrapper = null;
+let datePickerCurrentClearBtn = null;
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+function initDatePicker() {
+  // Populate month and year selects
+  MONTHS.forEach((month, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = month;
+    datePickerMonth.appendChild(option);
+  });
+
+  const currentYear = new Date().getFullYear();
+  for (let year = currentYear - 100; year <= currentYear + 10; year++) {
+    const option = document.createElement('option');
+    option.value = year;
+    option.textContent = year;
+    datePickerYear.appendChild(option);
+  }
+}
+
+function openDatePicker(inputEl, wrapperEl, clearBtnEl) {
+  datePickerCurrentInput = inputEl;
+  datePickerCurrentWrapper = wrapperEl;
+  datePickerCurrentClearBtn = clearBtnEl;
+
+  // Parse current value or use today
+  const currentValue = inputEl.dataset.value;
+  if (currentValue) {
+    const parts = currentValue.split('-');
+    datePickerCurrentDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  } else {
+    datePickerCurrentDate = new Date();
+  }
+
+  // Set month and year selects
+  datePickerMonth.value = datePickerCurrentDate.getMonth();
+  datePickerYear.value = datePickerCurrentDate.getFullYear();
+
+  renderDatePickerDays();
+
+  datePickerOverlay.classList.remove('hidden');
+  datePickerOverlay.setAttribute('aria-hidden', 'false');
+}
+
+function closeDatePicker() {
+  datePickerOverlay.classList.add('hidden');
+  datePickerOverlay.setAttribute('aria-hidden', 'true');
+  datePickerCurrentInput = null;
+  datePickerCurrentWrapper = null;
+  datePickerCurrentClearBtn = null;
+}
+
+function renderDatePickerDays() {
+  const year = parseInt(datePickerYear.value);
+  const month = parseInt(datePickerMonth.value);
+
+  datePickerDays.innerHTML = '';
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const startDayOfWeek = firstDay.getDay();
+  const daysInMonth = lastDay.getDate();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Get currently selected date
+  let selectedDate = null;
+  if (datePickerCurrentInput && datePickerCurrentInput.dataset.value) {
+    const parts = datePickerCurrentInput.dataset.value.split('-');
+    selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  }
+
+  // Empty cells for days before first day of month
+  for (let i = 0; i < startDayOfWeek; i++) {
+    const emptyCell = document.createElement('div');
+    emptyCell.className = 'date-picker-day empty';
+    datePickerDays.appendChild(emptyCell);
+  }
+
+  // Days of the month
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayCell = document.createElement('button');
+    dayCell.type = 'button';
+    dayCell.className = 'date-picker-day';
+    dayCell.textContent = day;
+
+    const cellDate = new Date(year, month, day);
+    cellDate.setHours(0, 0, 0, 0);
+
+    if (cellDate.getTime() === today.getTime()) {
+      dayCell.classList.add('today');
+    }
+
+    if (selectedDate && cellDate.getTime() === selectedDate.getTime()) {
+      dayCell.classList.add('selected');
+    }
+
+    dayCell.addEventListener('click', () => selectDate(year, month, day));
+    datePickerDays.appendChild(dayCell);
+  }
+}
+
+function selectDate(year, month, day) {
+  const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  const displayDate = new Date(year, month, day).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
+  if (datePickerCurrentInput) {
+    datePickerCurrentInput.value = displayDate;
+    datePickerCurrentInput.dataset.value = dateStr;
+  }
+
+  if (datePickerCurrentClearBtn) {
+    datePickerCurrentClearBtn.classList.remove('hidden');
+  }
+
+  closeDatePicker();
+}
+
+function clearDate(inputEl, clearBtnEl) {
+  inputEl.value = '';
+  inputEl.dataset.value = '';
+  clearBtnEl.classList.add('hidden');
+}
+
+// Event listeners
+datePickerMonth.addEventListener('change', renderDatePickerDays);
+datePickerYear.addEventListener('change', renderDatePickerDays);
+
+datePickerPrevMonth.addEventListener('click', () => {
+  let month = parseInt(datePickerMonth.value);
+  let year = parseInt(datePickerYear.value);
+
+  month--;
+  if (month < 0) {
+    month = 11;
+    year--;
+  }
+
+  datePickerMonth.value = month;
+  datePickerYear.value = year;
+  renderDatePickerDays();
+});
+
+datePickerNextMonth.addEventListener('click', () => {
+  let month = parseInt(datePickerMonth.value);
+  let year = parseInt(datePickerYear.value);
+
+  month++;
+  if (month > 11) {
+    month = 0;
+    year++;
+  }
+
+  datePickerMonth.value = month;
+  datePickerYear.value = year;
+  renderDatePickerDays();
+});
+
+datePickerToday.addEventListener('click', () => {
+  const today = new Date();
+  selectDate(today.getFullYear(), today.getMonth(), today.getDate());
+});
+
+datePickerClose.addEventListener('click', closeDatePicker);
+
+datePickerOverlay.addEventListener('click', (e) => {
+  if (e.target === datePickerOverlay) closeDatePicker();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !datePickerOverlay.classList.contains('hidden')) closeDatePicker();
+});
+
+// Initialize date picker buttons for all date inputs
 function initDatePickerButtons() {
-  document.querySelectorAll('.date-picker-btn').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const input = btn.closest('.date-input-wrapper')?.querySelector('input[type="date"]');
-      if (input) {
-        input.focus();
-        if ('showPicker' in input) {
-          try {
-            input.showPicker();
-          } catch {
-            // showPicker() may fail if the input is not focusable
-          }
-        }
-      }
+  const dateInputs = [
+    { input: dueDateInput, wrapper: document.getElementById('dueDateWrapper') },
+    { input: birthdayDateInput, wrapper: document.getElementById('birthdayDateWrapper') },
+    { input: editReminderDueDateInput, wrapper: document.getElementById('editReminderDueDateWrapper') },
+    { input: editBirthdayDateInput, wrapper: document.getElementById('editBirthdayDateWrapper') },
+  ];
+
+  dateInputs.forEach(({ input, wrapper }) => {
+    if (!input || !wrapper) return;
+
+    const btn = wrapper.querySelector('.date-picker-btn');
+    const clearBtn = wrapper.querySelector('.date-clear-btn');
+
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openDatePicker(input, wrapper, clearBtn);
+      });
+    }
+
+    // Also open picker when clicking the input
+    input.addEventListener('click', () => {
+      openDatePicker(input, wrapper, clearBtn);
     });
+
+    // Clear button functionality
+    if (clearBtn) {
+      clearBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        clearDate(input, clearBtn);
+      });
+    }
   });
 }
 
+initDatePicker();
 initDatePickerButtons();
