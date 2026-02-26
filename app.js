@@ -979,6 +979,29 @@ let datePickerCurrentClearBtn = null;
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+function ensureYearOption(year) {
+  const existingOption = Array.from(datePickerYear.options).find(opt => parseInt(opt.value) === year);
+  if (existingOption) return;
+
+  const option = document.createElement('option');
+  option.value = year;
+  option.textContent = year;
+
+  const options = Array.from(datePickerYear.options);
+  if (year < parseInt(options[0].value)) {
+    datePickerYear.insertBefore(option, options[0]);
+  } else if (year > parseInt(options[options.length - 1].value)) {
+    datePickerYear.appendChild(option);
+  } else {
+    for (let i = 0; i < options.length; i++) {
+      if (year < parseInt(options[i].value)) {
+        datePickerYear.insertBefore(option, options[i]);
+        break;
+      }
+    }
+  }
+}
+
 function initDatePicker() {
   // Populate month and year selects
   MONTHS.forEach((month, index) => {
@@ -989,7 +1012,7 @@ function initDatePicker() {
   });
 
   const currentYear = new Date().getFullYear();
-  for (let year = currentYear - 100; year <= currentYear + 10; year++) {
+  for (let year = currentYear - 100; year <= currentYear + 100; year++) {
     const option = document.createElement('option');
     option.value = year;
     option.textContent = year;
@@ -1013,6 +1036,7 @@ function openDatePicker(inputEl, wrapperEl, clearBtnEl) {
 
   // Set month and year selects
   datePickerMonth.value = datePickerCurrentDate.getMonth();
+  ensureYearOption(datePickerCurrentDate.getFullYear());
   datePickerYear.value = datePickerCurrentDate.getFullYear();
 
   renderDatePickerDays();
@@ -1110,7 +1134,10 @@ function clearDate(inputEl, clearBtnEl) {
 
 // Event listeners
 datePickerMonth.addEventListener('change', renderDatePickerDays);
-datePickerYear.addEventListener('change', renderDatePickerDays);
+datePickerYear.addEventListener('change', () => {
+  ensureYearOption(parseInt(datePickerYear.value));
+  renderDatePickerDays();
+});
 
 datePickerPrevMonth.addEventListener('click', () => {
   let month = parseInt(datePickerMonth.value);
@@ -1122,6 +1149,7 @@ datePickerPrevMonth.addEventListener('click', () => {
     year--;
   }
 
+  ensureYearOption(year);
   datePickerMonth.value = month;
   datePickerYear.value = year;
   renderDatePickerDays();
@@ -1137,6 +1165,7 @@ datePickerNextMonth.addEventListener('click', () => {
     year++;
   }
 
+  ensureYearOption(year);
   datePickerMonth.value = month;
   datePickerYear.value = year;
   renderDatePickerDays();
