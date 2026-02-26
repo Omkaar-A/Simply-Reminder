@@ -111,11 +111,12 @@
           </div>
           <div class="edit-reminder-field">
             <label for="editReminderDueDate">Due date</label>
-            <div class="date-input-wrapper">
-              <input type="date" id="editReminderDueDate" title="Due date" />
+            <div class="date-input-wrapper" id="editReminderDueDateWrapper">
+              <input type="text" id="editReminderDueDate" placeholder="Select date" readonly autocomplete="off" />
               <button type="button" class="date-picker-btn" aria-label="Open calendar" tabindex="-1">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </button>
+              <button type="button" class="date-clear-btn hidden" aria-label="Clear date" tabindex="-1">✕</button>
             </div>
           </div>
           <div class="edit-reminder-field">
@@ -164,8 +165,8 @@
           </div>
           <div class="edit-birthday-field">
             <label for="editBirthdayDate">Birthday</label>
-            <div class="date-input-wrapper">
-              <input type="date" id="editBirthdayDate" title="Year doesn't matter" required />
+            <div class="date-input-wrapper" id="editBirthdayDateWrapper">
+              <input type="text" id="editBirthdayDate" placeholder="Select date" readonly autocomplete="off" required />
               <button type="button" class="date-picker-btn" aria-label="Open calendar" tabindex="-1">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </button>
@@ -225,11 +226,12 @@
         <input type="text" id="reminderInput" placeholder="What do you need to remember?" autocomplete="off" maxlength="200" />
         <textarea id="noteInput" placeholder="Add a note (optional)" rows="2" maxlength="500"></textarea>
         <div class="form-row">
-            <div class="date-input-wrapper">
-              <input type="date" id="dueDate" title="Due date" />
+            <div class="date-input-wrapper" id="dueDateWrapper">
+              <input type="text" id="dueDate" placeholder="Due date" readonly autocomplete="off" />
               <button type="button" class="date-picker-btn" aria-label="Open calendar" tabindex="-1">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </button>
+              <button type="button" class="date-clear-btn hidden" aria-label="Clear date" tabindex="-1">✕</button>
             </div>
             <div class="category-picker" id="categoryPicker">
             <button type="button" class="cat-btn" data-cat="📚" title="School">📚</button>
@@ -287,8 +289,8 @@
             <input type="text" id="birthdayLabel" placeholder="e.g. Mom, Best friend" autocomplete="off" maxlength="40" />
           </div>
           <div class="birthday-form-row">
-            <div class="date-input-wrapper">
-              <input type="date" id="birthdayDate" title="Birthday (year doesn't matter)" required />
+            <div class="date-input-wrapper" id="birthdayDateWrapper">
+              <input type="text" id="birthdayDate" placeholder="Birthday" readonly autocomplete="off" required />
               <button type="button" class="date-picker-btn" aria-label="Open calendar" tabindex="-1">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" ry="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               </button>
@@ -304,6 +306,32 @@
         <p class="empty-sub">Add family & friends above!</p>
       </div>
     </section>
+  </div>
+
+  <!-- Custom Date Picker Calendar -->
+  <div class="date-picker-overlay hidden" id="datePickerOverlay" aria-hidden="true">
+    <div class="date-picker-calendar glass-card" id="datePickerCalendar" role="dialog" aria-label="Date picker">
+      <div class="date-picker-header">
+        <button type="button" class="date-picker-nav" id="datePickerPrevMonth" aria-label="Previous month">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="date-picker-title">
+          <select id="datePickerMonth" class="date-picker-month-select" aria-label="Month"></select>
+          <select id="datePickerYear" class="date-picker-year-select" aria-label="Year"></select>
+        </div>
+        <button type="button" class="date-picker-nav" id="datePickerNextMonth" aria-label="Next month">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+      <div class="date-picker-weekdays">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div class="date-picker-days" id="datePickerDays"></div>
+      <div class="date-picker-footer">
+        <button type="button" class="date-picker-today" id="datePickerToday">Today</button>
+        <button type="button" class="date-picker-close" id="datePickerClose">Close</button>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>
