@@ -1322,6 +1322,124 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !datePickerOverlay.classList.contains('hidden')) closeDatePicker();
 });
 
+// Parse manually typed date input
+function parseManualDateInput(value) {
+  if (!value || !value.trim()) return null;
+  
+  const s = value.trim();
+  
+  // Already in YYYY-MM-DD format
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    const d = new Date(s + 'T12:00:00');
+    if (!isNaN(d.getTime())) {
+      return {
+        value: s,
+        display: d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+      };
+    }
+  }
+  
+  // Try various formats
+  let day, month, year;
+  
+  // Format: MM/DD/YYYY or MM-DD-YYYY (US format)
+  const usMatch = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (usMatch) {
+    // Assume US format (MM/DD/YYYY) by default
+    month = parseInt(usMatch[1], 10);
+    day = parseInt(usMatch[2], 10);
+    year = parseInt(usMatch[3], 10);
+  }
+  
+  // Format: M/D/YY or M/D/YYYY (short US)
+  const shortUsMatch = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})$/);
+  if (shortUsMatch) {
+    month = parseInt(shortUsMatch[1], 10);
+    day = parseInt(shortUsMatch[2], 10);
+    year = parseInt(shortUsMatch[3], 10);
+    year = year < 50 ? 2000 + year : 1900 + year;
+  }
+  
+  // Format: Month DD, YYYY (e.g., "January 15, 2024" or "Jan 15 2024")
+  const longMatch = s.match(/^([a-zA-Z]+)\s+(\d{1,2}),?\s+(\d{4})$/i);
+  if (longMatch) {
+    const monthNames = ['january', 'february', 'march', 'april', 'may', 'june', 
+                        'july', 'august', 'september', 'october', 'november', 'december'];
+    const shortNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 
+                         'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    const monthStr = longMatch[1].toLowerCase();
+    let monthIndex = monthNames.indexOf(monthStr);
+    if (monthIndex === -1) monthIndex = shortNames.indexOf(monthStr);
+    if (monthIndex !== -1) {
+      month = monthIndex + 1;
+      day = parseInt(longMatch[2], 10);
+      year = parseInt(longMatch[3], 10);
+    }
+  }
+  
+  // Try native Date parsing as fallback
+  if (month === undefined) {
+    const d = new Date(s);
+    if (!isNaN(d.getTime())) {
+      year = d.getFullYear();
+      month = d.getMonth() + 1;
+      day = d.getDate();
+    }
+  }
+  
+  // Validate and create date string
+  if (month && day && year) {
+    // Check valid ranges
+    if (month < 1 || month > 12) return null;
+    if (day < 1 || day > 31) return null;
+    if (year < 1 || year > 9999) return null;
+    
+    const maxDays = new Date(year, month, 0).getDate();
+    if (day > maxDays) return null;
+    
+    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const displayDate = new Date(year, month - 1, day).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    
+    return { value: dateStr, display: displayDate };
+  }
+  
+  return null;
+}
+
+// Handle manual date input
+function handleManualDateInput(inputEl, clearBtnEl) {
+  const value = inputEl.value.trim();
+  
+  if (!value) {
+    // Empty input - clear
+    inputEl.value = '';
+    inputEl.dataset.value = '';
+    if (clearBtnEl) clearBtnEl.classList.add('hidden');
+    return;
+  }
+  
+  // Check if it's already a valid display value from picker
+  if (inputEl.dataset.value && inputEl.value) {
+    // Check if display matches the stored value
+    const storedDate = new Date(inputEl.dataset.value + 'T12:00:00');
+    const displayStr = storedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    if (inputEl.value === displayStr) return; // Already set correctly
+  }
+  
+  // Try to parse manual input
+  const result = parseManualDateInput(value);
+  
+  if (result) {
+    inputEl.value = result.display;
+    inputEl.dataset.value = result.value;
+    if (clearBtnEl) clearBtnEl.classList.remove('hidden');
+  } else {
+    // Invalid date - could clear or leave as-is
+    // For now, leave as-is but clear the dataset value to indicate invalid
+    inputEl.dataset.value = '';
+  }
+}
+
 // Initialize date picker buttons for all date inputs
 function initDatePickerButtons() {
   const dateInputs = [
@@ -1344,9 +1462,26 @@ function initDatePickerButtons() {
       });
     }
 
-    // Also open picker when clicking the input
+    // Open picker when clicking the input (but allow manual typing too)
     input.addEventListener('click', () => {
-      openDatePicker(input, wrapper, clearBtn);
+      // Only open picker if no text or text looks like a date picker selection
+      if (!input.value.trim() || input.dataset.value) {
+        openDatePicker(input, wrapper, clearBtn);
+      }
+    });
+
+    // Handle manual date input on blur
+    input.addEventListener('blur', () => {
+      handleManualDateInput(input, clearBtn);
+    });
+
+    // Handle Enter key to parse and close
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleManualDateInput(input, clearBtn);
+        input.blur();
+      }
     });
 
     // Clear button functionality

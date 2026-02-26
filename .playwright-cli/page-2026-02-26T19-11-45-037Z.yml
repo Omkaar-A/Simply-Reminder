@@ -1,0 +1,67 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Good night 🌙
+        - heading "Simply Reminder" [level=1] [ref=e7]
+      - generic [ref=e8]:
+        - button "🌙" [ref=e9] [cursor=pointer]
+        - button "⚙️" [ref=e10] [cursor=pointer]
+  - navigation "Switch section" [ref=e11]:
+    - button "📋 Reminders" [ref=e12] [cursor=pointer]
+    - button "🎂 Birthdays" [ref=e13] [cursor=pointer]
+  - region "📋 Reminders" [ref=e14]:
+    - generic [ref=e16]:
+      - button "Sign in with Google" [ref=e17] [cursor=pointer]
+      - generic [ref=e18]: Link your Google Calendar
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]: "0"
+        - text: Total
+      - generic [ref=e22]:
+        - generic [ref=e23]: "0"
+        - text: Active
+      - generic [ref=e24]:
+        - generic [ref=e25]: "0"
+        - text: Done
+      - generic [ref=e26]:
+        - generic [ref=e27]: 0%
+        - text: Progress
+    - generic [ref=e30]:
+      - textbox "What do you need to remember?" [ref=e31]
+      - textbox "Add a note (optional)" [ref=e32]
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - textbox "Due date" [ref=e35] [cursor=pointer]
+          - button "Open calendar" [ref=e36] [cursor=pointer]:
+            - img [ref=e37]
+        - generic [ref=e39]:
+          - textbox "Due time" [ref=e40] [cursor=pointer]
+          - button "Open time picker" [ref=e41] [cursor=pointer]:
+            - img [ref=e42]
+        - generic [ref=e45]:
+          - button "📚" [ref=e46] [cursor=pointer]
+          - button "🏠" [ref=e47] [cursor=pointer]
+          - button "🎮" [ref=e48] [cursor=pointer]
+          - button "🏃" [ref=e49] [cursor=pointer]
+          - button "🎵" [ref=e50] [cursor=pointer]
+          - button "⭐" [ref=e51] [cursor=pointer]
+        - combobox "Priority" [ref=e52]:
+          - option "⚪ Normal" [selected]
+          - option "🟢 Low"
+          - option "🔴 High"
+        - button "Add" [ref=e53] [cursor=pointer]
+    - generic [ref=e54]:
+      - generic [ref=e55]:
+        - img [ref=e56]
+        - textbox "Search..." [ref=e59]
+      - generic [ref=e60]:
+        - button "All" [ref=e61] [cursor=pointer]
+        - button "Active" [ref=e62] [cursor=pointer]
+        - button "Done" [ref=e63] [cursor=pointer]
+        - button "High" [ref=e64] [cursor=pointer]
+    - list
+    - generic [ref=e65]:
+      - generic [ref=e66]: 📝
+      - paragraph [ref=e67]: No reminders yet
+      - paragraph [ref=e68]: Add your first one above!
