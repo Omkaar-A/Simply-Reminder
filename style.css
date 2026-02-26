@@ -1237,39 +1237,67 @@ body.dark .edit-reminder-actions .btn-edit-cancel:hover {
 }
 
 /* ===== DATE INPUT CALENDAR ICON ===== */
-/* Hide native date picker icons so only custom calendar button shows */
+/* Hide native date picker icons across all browsers so only custom calendar button shows */
 input[type="date"] {
   position: relative;
   cursor: pointer;
-  appearance: none;
   -webkit-appearance: none;
-  -moz-appearance: textfield;
+  -moz-appearance: none;
+  appearance: none;
 }
 
-/* WebKit: hide calendar picker indicator */
+/* WebKit browsers (Chrome, Safari, Edge): hide calendar picker indicator */
 input[type="date"]::-webkit-calendar-picker-indicator {
-  display: none;
-  -webkit-appearance: none;
-  appearance: none;
-  width: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  opacity: 0;
+  display: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
-/* WebKit: hide inner spin button (for datetime-local, time inputs) */
+/* WebKit: hide inner spin button */
 input[type="date"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  appearance: none;
-  display: none;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  display: none !important;
+  margin: 0 !important;
 }
 
 /* WebKit: hide clear button */
 input[type="date"]::-webkit-clear-button {
-  -webkit-appearance: none;
-  appearance: none;
-  display: none;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  display: none !important;
+  margin: 0 !important;
+}
+
+/* Firefox: remove default styling and hide calendar icon */
+input[type="date"]::-moz-calendar-picker-indicator {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* Firefox: additional reset for date input appearance */
+input[type="date"]:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/* Edge Legacy: hide clear button */
+input[type="date"]::-ms-clear {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Edge Legacy: hide reveal button */
+input[type="date"]::-ms-reveal {
+  display: none !important;
 }
 
 /* Date input wrapper for custom calendar button */
@@ -1279,6 +1307,7 @@ input[type="date"]::-webkit-clear-button {
   align-items: center;
 }
 
+/* Ensure input padding accommodates the custom button */
 .date-input-wrapper input[type="date"] {
   padding-right: 2.25rem;
 }
