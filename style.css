@@ -1069,7 +1069,7 @@ body.dark .edit-reminder-form .edit-reminder-field:nth-child(5) label {
   border-color: #00cec9;
   box-shadow: 0 0 0 3px rgba(0, 206, 201, 0.2);
 }
-.edit-reminder-form .edit-reminder-field:nth-child(3) input[type="date"]:focus {
+.edit-reminder-form .edit-reminder-field:nth-child(3) .date-input-wrapper input[type="text"]:focus {
   border-color: #0984e3;
   box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.2);
 }
@@ -1078,7 +1078,7 @@ body.dark .edit-reminder-form .edit-reminder-field:nth-child(5) label {
   box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
 }
 
-.edit-reminder-form .edit-reminder-field input[type="date"] {
+.edit-reminder-form .edit-reminder-field .date-input-wrapper input[type="text"] {
   padding: 0.75rem 2.5rem 0.75rem 1rem;
   border: 2px solid var(--glass-border);
   border-radius: var(--radius-sm);
@@ -1091,6 +1091,7 @@ body.dark .edit-reminder-form .edit-reminder-field:nth-child(5) label {
   min-height: 44px;
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
 }
 
 .edit-reminder-form .edit-reminder-field select {
@@ -1640,4 +1641,123 @@ body.dark .date-picker-close:hover {
     flex-wrap: wrap;
     justify-content: center;
   }
+
+  /* Mobile date input touch targets */
+  .date-input-wrapper {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .date-input-wrapper input[type="text"] {
+    min-height: 44px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    padding: 0.65rem 2.75rem 0.65rem 0.75rem;
+  }
+
+  .date-picker-btn {
+    width: 44px;
+    height: 44px;
+    right: 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+
+  .date-clear-btn {
+    width: 32px;
+    height: 32px;
+    right: 46px;
+    font-size: 0.8rem;
+  }
+
+  /* Date picker calendar mobile adjustments */
+  .date-picker-calendar {
+    max-width: calc(100vw - 2rem);
+  }
+
+  .date-picker-header {
+    padding: 0.75rem;
+  }
+
+  .date-picker-nav {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .date-picker-month-select,
+  .date-picker-year-select {
+    min-height: 44px;
+    font-size: 16px; /* Prevents iOS zoom */
+    padding: 0.5rem 0.75rem;
+  }
+
+  .date-picker-days {
+    gap: 4px;
+    padding: 0.5rem;
+  }
+
+  .date-picker-day {
+    aspect-ratio: 1;
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 0.9rem;
+    border-radius: 50%;
+  }
+
+  .date-picker-day:not(.empty):hover {
+    transform: scale(1.08);
+  }
+
+  .date-picker-footer {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .date-picker-today,
+  .date-picker-close {
+    flex: 1;
+    min-height: 44px;
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+
+  .date-picker-weekdays {
+    padding: 0.5rem 0.25rem 0.35rem;
+  }
+
+  /* Form date input wrappers on mobile */
+  #dueDateWrapper {
+    width: 100%;
+  }
+
+  #dueDateWrapper input[type="text"] {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  #birthdayDateWrapper {
+    width: 100%;
+  }
+
+  #birthdayDateWrapper input[type="text"] {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  #editReminderDueDateWrapper,
+  #editBirthdayDateWrapper {
+    width: 100%;
+  }
+
+  #editReminderDueDateWrapper input[type="text"],
+  #editBirthdayDateWrapper input[type="text"] {
+    width: 100%;
+    min-width: 100%;
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+}
+
+/* Body scroll lock when date picker is open */
+body.date-picker-open {
+  overflow: hidden;
+  touch-action: none;
 }

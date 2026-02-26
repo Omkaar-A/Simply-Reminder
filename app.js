@@ -1019,6 +1019,9 @@ function openDatePicker(inputEl, wrapperEl, clearBtnEl) {
 
   datePickerOverlay.classList.remove('hidden');
   datePickerOverlay.setAttribute('aria-hidden', 'false');
+  
+  // Lock body scroll on mobile
+  document.body.classList.add('date-picker-open');
 }
 
 function closeDatePicker() {
@@ -1027,6 +1030,9 @@ function closeDatePicker() {
   datePickerCurrentInput = null;
   datePickerCurrentWrapper = null;
   datePickerCurrentClearBtn = null;
+  
+  // Unlock body scroll
+  document.body.classList.remove('date-picker-open');
 }
 
 function renderDatePickerDays() {
