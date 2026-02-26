@@ -1242,7 +1242,7 @@ input[type="date"] {
   position: relative;
   cursor: pointer;
   -webkit-appearance: none;
-  -moz-appearance: none;
+  -moz-appearance: textfield;
   appearance: none;
 }
 
@@ -1276,16 +1276,54 @@ input[type="date"]::-webkit-clear-button {
   margin: 0 !important;
 }
 
-/* Firefox: remove default styling and hide calendar icon */
+/* Firefox: fully hide the native calendar picker indicator */
 input[type="date"]::-moz-calendar-picker-indicator {
   display: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
   opacity: 0 !important;
   visibility: hidden !important;
+  pointer-events: none !important;
+  border: none !important;
+  background: transparent !important;
 }
 
-/* Firefox: additional reset for date input appearance */
+/* Firefox: suppress the datetime placeholder pseudo-element */
+input[type="date"]::-webkit-datetime-edit {
+  -moz-appearance: none !important;
+}
+
+/* Firefox: hide the datetime fields wrapper to prevent native icon space */
+input[type="date"]::-moz-placeholder {
+  -moz-appearance: none !important;
+}
+
+/* Firefox: remove dropdown arrow and any native chrome */
+input[type="date"]::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Firefox: ensure textfield appearance suppresses date picker chrome entirely */
+@supports (-moz-appearance: textfield) {
+  input[type="date"] {
+    -moz-appearance: textfield !important;
+    background: transparent;
+  }
+}
+
+/* Firefox: additional reset for date input appearance - remove validation glow */
 input[type="date"]:-moz-ui-invalid {
   box-shadow: none;
+}
+
+/* Firefox: remove any residual native indicator space */
+input[type="date"]::-moz-focus-outer {
+  border: 0;
 }
 
 /* Edge Legacy: hide clear button */
