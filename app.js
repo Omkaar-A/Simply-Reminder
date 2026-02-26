@@ -978,8 +978,13 @@ let datePickerCurrentWrapper = null;
 let datePickerCurrentClearBtn = null;
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DATE_PICKER_MAX_YEAR = 9999;
+const DATE_PICKER_MIN_YEAR = 0;
 
 function ensureYearOption(year) {
+  // Clamp year to valid range
+  year = Math.max(DATE_PICKER_MIN_YEAR, Math.min(year, DATE_PICKER_MAX_YEAR));
+
   const existingOption = Array.from(datePickerYear.options).find(opt => parseInt(opt.value) === year);
   if (existingOption) return;
 
@@ -1012,7 +1017,10 @@ function initDatePicker() {
   });
 
   const currentYear = new Date().getFullYear();
-  for (let year = currentYear - 100; year <= currentYear + 100; year++) {
+  const initialStartYear = Math.max(DATE_PICKER_MIN_YEAR, currentYear - 100);
+  const initialEndYear = Math.min(DATE_PICKER_MAX_YEAR, currentYear + 10);
+
+  for (let year = initialStartYear; year <= initialEndYear; year++) {
     const option = document.createElement('option');
     option.value = year;
     option.textContent = year;
@@ -1149,6 +1157,12 @@ datePickerPrevMonth.addEventListener('click', () => {
     year--;
   }
 
+  // Clamp at min year
+  if (year < DATE_PICKER_MIN_YEAR) {
+    year = DATE_PICKER_MIN_YEAR;
+    month = 0; // Keep at January if at min year
+  }
+
   ensureYearOption(year);
   datePickerMonth.value = month;
   datePickerYear.value = year;
@@ -1163,6 +1177,12 @@ datePickerNextMonth.addEventListener('click', () => {
   if (month > 11) {
     month = 0;
     year++;
+  }
+
+  // Clamp at max year
+  if (year > DATE_PICKER_MAX_YEAR) {
+    year = DATE_PICKER_MAX_YEAR;
+    month = 11; // Keep at December if at max year
   }
 
   ensureYearOption(year);
