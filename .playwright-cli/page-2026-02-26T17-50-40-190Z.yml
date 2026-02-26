@@ -1,0 +1,29 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - paragraph [ref=e6]: Good evening 🌆
+        - heading "Simply Reminder" [level=1] [ref=e7]
+      - generic [ref=e8]:
+        - button "🌙" [ref=e9] [cursor=pointer]
+        - button "⚙️" [ref=e10] [cursor=pointer]
+  - navigation "Switch section" [ref=e11]:
+    - button "📋 Reminders" [ref=e12] [cursor=pointer]
+    - button "🎂 Birthdays" [ref=e13] [cursor=pointer]
+  - region "🎂 Birthdays" [ref=e116]:
+    - heading "Birthdays" [level=2] [ref=e117]
+    - generic [ref=e119]:
+      - generic [ref=e120]:
+        - textbox "Name" [ref=e121]
+        - textbox "e.g. Mom, Best friend" [ref=e122]
+      - generic [ref=e123]:
+        - generic [ref=e124]:
+          - textbox "Birthday" [active] [ref=e125] [cursor=pointer]
+          - button "Open calendar" [ref=e126] [cursor=pointer]:
+            - img [ref=e127]
+        - button "Add birthday" [ref=e129] [cursor=pointer]
+    - list
+    - generic [ref=e130]:
+      - generic [ref=e131]: 🎈
+      - paragraph [ref=e132]: No birthdays yet
+      - paragraph [ref=e133]: Add family & friends above!
