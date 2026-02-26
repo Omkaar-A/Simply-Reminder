@@ -21,6 +21,7 @@ const form = document.getElementById('addForm');
 const input = document.getElementById('reminderInput');
 const noteInput = document.getElementById('noteInput');
 const dueDateInput = document.getElementById('dueDate');
+const dueTimeInput = document.getElementById('dueTime');
 const listEl = document.getElementById('reminderList');
 const emptyState = document.getElementById('emptyState');
 const filterBtns = document.querySelectorAll('.filter-btn');
@@ -60,6 +61,7 @@ const editReminderForm = document.getElementById('editReminderForm');
 const editReminderTextInput = document.getElementById('editReminderText');
 const editReminderNoteInput = document.getElementById('editReminderNote');
 const editReminderDueDateInput = document.getElementById('editReminderDueDate');
+const editReminderDueTimeInput = document.getElementById('editReminderDueTime');
 const editReminderPriorityInput = document.getElementById('editReminderPriority');
 const editReminderClose = document.getElementById('editReminderClose');
 const editReminderCancel = document.getElementById('editReminderCancel');
@@ -396,10 +398,77 @@ function formatDueDate(dateStr) {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function isOverdue(dateStr) {
+function isOverdue(dateStr, timeStr) {
   if (!dateStr) return false;
+  const now = new Date();
   const d = new Date(dateStr + 'T23:59:59');
-  return d < new Date();
+  
+  // If time is set, check if that specific time has passed
+  if (timeStr) {
+    const [hour, minute] = timeStr.split(':');
+    d.setHours(parseInt(hour, 10), parseInt(minute, 10), 59, 999);
+  }
+  
+  return d < now;
+}
+
+/* ===== TIME HELPERS ===== */
+function parseTimeInput(value) {
+  if (!value || !value.trim()) return null;
+  const s = value.trim().toLowerCase();
+  
+  // Try to match various formats
+  // 3, 3pm, 3:30, 3:30pm, 15:30, 3:30 PM, etc.
+  let hour, minute = 0, isPm = s.includes('pm');
+  
+  // Remove am/pm for parsing
+  const timePart = s.replace(/\s*(am|pm)\s*/gi, '');
+  
+  if (timePart.includes(':')) {
+    const parts = timePart.split(':');
+    hour = parseInt(parts[0], 10);
+    minute = parseInt(parts[1], 10);
+  } else {
+    hour = parseInt(timePart, 10);
+  }
+  
+  if (isNaN(hour)) return null;
+  
+  // Handle 12-hour format conversion
+  if (isPm && hour < 12) hour += 12;
+  if (!isPm && hour === 12) hour = 0;
+  
+  // Handle plain numbers like "3" or "3pm"
+  // If it's a plain number without am/pm and > 12, assume 24-hour
+  if (!s.includes('am') && !s.includes('pm') && hour > 12 && !timePart.includes(':')) {
+    // Keep as 24-hour format
+  } else if (!s.includes('am') && !s.includes('pm') && hour <= 12 && hour > 0) {
+    // Assume AM for plain numbers unless > 12
+  }
+  
+  // Validate ranges
+  if (hour < 0 || hour > 23) return null;
+  if (minute < 0 || minute > 59) minute = 0;
+  
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+function formatTimeDisplay(timeStr) {
+  if (!timeStr) return '';
+  const [hour, minute] = timeStr.split(':');
+  const h = parseInt(hour, 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${minute} ${ampm}`;
+}
+
+function formatDueDateTime(dateStr, timeStr) {
+  const dateFormatted = formatDueDate(dateStr);
+  if (!dateFormatted) return null;
+  if (timeStr) {
+    return `Due: ${dateFormatted} at ${formatTimeDisplay(timeStr)}`;
+  }
+  return `Due: ${dateFormatted}`;
 }
 
 /* ===== CONFETTI ===== */
@@ -478,10 +547,29 @@ function addToGoogleCalendar(reminder) {
 
   const event = {
     summary: (reminder.category ? reminder.category + ' ' : '') + reminder.text,
-    start: { date: reminder.dueDate },
-    end: { date: reminder.dueDate },
     reminders: { useDefault: true },
   };
+
+  // Use dateTime if dueTime is set, otherwise use all-day event
+  if (reminder.dueTime) {
+    // Create ISO datetime strings with timezone
+    const startDateTime = `${reminder.dueDate}T${reminder.dueTime}:00`;
+    // End time is 1 hour later
+    const [hour, minute] = reminder.dueTime.split(':');
+    let endHour = parseInt(hour, 10) + 1;
+    let endDay = reminder.dueDate;
+    if (endHour >= 24) {
+      endHour = endHour - 24;
+      // Would need to handle day rollover - simplify for now
+    }
+    const endDateTime = `${reminder.dueDate}T${String(endHour).padStart(2, '0')}:${minute}:00`;
+    
+    event.start = { dateTime: startDateTime };
+    event.end = { dateTime: endDateTime };
+  } else {
+    event.start = { date: reminder.dueDate };
+    event.end = { date: reminder.dueDate };
+  }
 
   fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
     method: 'POST',
@@ -507,7 +595,18 @@ function getGoogleCalendarUrl(reminder) {
   let dateParam = '';
   if (reminder.dueDate) {
     const d = reminder.dueDate.replace(/-/g, '');
-    dateParam = `&dates=${d}/${d}`;
+    if (reminder.dueTime) {
+      // Include time in the URL
+      const startTime = reminder.dueTime.replace(':', '') + '00';
+      // End time is 1 hour later
+      const [hour, minute] = reminder.dueTime.split(':');
+      let endHour = parseInt(hour, 10) + 1;
+      let endTimeStr = `${String(endHour).padStart(2, '0')}${minute}00`;
+      // Handle day rollover if needed (simplified)
+      dateParam = `&dates=${d}T${startTime}/${d}T${endTimeStr}`;
+    } else {
+      dateParam = `&dates=${d}/${d}`;
+    }
   }
   return `https://calendar.google.com/calendar/event?action=TEMPLATE&text=${title}${dateParam}`;
 }
@@ -568,8 +667,8 @@ function render() {
     li.className = 'reminder-item ' + priorityClass + (reminder.done ? ' done' : '');
     li.dataset.id = reminder.id;
 
-    const dueFormatted = formatDueDate(reminder.dueDate);
-    const overdue = !reminder.done && isOverdue(reminder.dueDate);
+    const dueFormatted = formatDueDateTime(reminder.dueDate, reminder.dueTime);
+    const overdue = !reminder.done && isOverdue(reminder.dueDate, reminder.dueTime);
     const calUrl = getGoogleCalendarUrl(reminder);
 
     li.innerHTML = `
@@ -612,13 +711,14 @@ function render() {
 }
 
 /* ===== ACTIONS ===== */
-function addReminder(text, note, dueDate, category, priority) {
+function addReminder(text, note, dueDate, dueTime, category, priority) {
   if (!text.trim()) return;
   const reminder = {
     id: crypto.randomUUID(),
     text: text.trim(),
     note: note ? note.trim() : '',
     dueDate: dueDate || null,
+    dueTime: dueTime || null,
     category: category || '',
     priority: priority || 'normal',
     done: false,
@@ -663,12 +763,22 @@ function openEditReminder(id) {
     editReminderDueDateInput.value = r.dueDate ? new Date(r.dueDate + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
     editReminderDueDateInput.dataset.value = r.dueDate || '';
   }
+  if (editReminderDueTimeInput) {
+    editReminderDueTimeInput.value = r.dueTime ? formatTimeDisplay(r.dueTime) : '';
+    editReminderDueTimeInput.dataset.value = r.dueTime || '';
+  }
   if (editReminderPriorityInput) editReminderPriorityInput.value = r.priority || 'normal';
 
   // Update clear button visibility
   const clearBtn = document.querySelector('#editReminderDueDateWrapper .date-clear-btn');
   if (clearBtn) {
     clearBtn.classList.toggle('hidden', !r.dueDate);
+  }
+  
+  // Update time clear button visibility
+  const timeClearBtn = document.querySelector('#editReminderDueTimeWrapper .time-clear-btn');
+  if (timeClearBtn) {
+    timeClearBtn.classList.toggle('hidden', !r.dueTime);
   }
   
   // Set category buttons
@@ -699,6 +809,7 @@ function saveEditReminder() {
   r.text = text;
   r.note = editReminderNoteInput ? editReminderNoteInput.value.trim() : '';
   r.dueDate = editReminderDueDateInput ? editReminderDueDateInput.dataset.value || null : null;
+  r.dueTime = editReminderDueTimeInput ? editReminderDueTimeInput.dataset.value || null : null;
   r.category = selectedEditCategory;
   r.priority = editReminderPriorityInput ? editReminderPriorityInput.value : 'normal';
   
@@ -845,14 +956,19 @@ form.addEventListener('submit', (e) => {
   const text = input.value.trim();
   const note = noteInput.value.trim();
   const due = dueDateInput.dataset.value || null;
+  const dueTime = dueTimeInput.dataset.value || null;
   const priority = prioritySelect.value;
-  addReminder(text, note, due, selectedCategory, priority);
+  addReminder(text, note, due, dueTime, selectedCategory, priority);
   input.value = '';
   noteInput.value = '';
   dueDateInput.value = '';
   dueDateInput.dataset.value = '';
+  dueTimeInput.value = '';
+  dueTimeInput.dataset.value = '';
   const clearBtn = document.querySelector('#dueDateWrapper .date-clear-btn');
   if (clearBtn) clearBtn.classList.add('hidden');
+  const timeClearBtn = document.querySelector('#dueTimeWrapper .time-clear-btn');
+  if (timeClearBtn) timeClearBtn.classList.add('hidden');
   prioritySelect.value = 'normal';
   selectedCategory = '';
   categoryBtns.forEach((b) => b.classList.remove('selected'));
@@ -1246,3 +1362,184 @@ function initDatePickerButtons() {
 
 initDatePicker();
 initDatePickerButtons();
+
+/* ===== CUSTOM TIME PICKER ===== */
+const timePickerOverlay = document.getElementById('timePickerOverlay');
+const timePickerHour = document.getElementById('timePickerHour');
+const timePickerMinute = document.getElementById('timePickerMinute');
+const timePickerAmPm = document.getElementById('timePickerAmPm');
+const timePickerClose = document.getElementById('timePickerClose');
+const timePickerSet = document.getElementById('timePickerSet');
+
+let timePickerCurrentInput = null;
+let timePickerCurrentWrapper = null;
+let timePickerCurrentClearBtn = null;
+
+function initTimePicker() {
+  // Populate hours (1-12)
+  for (let h = 1; h <= 12; h++) {
+    const option = document.createElement('option');
+    option.value = h;
+    option.textContent = h;
+    timePickerHour.appendChild(option);
+  }
+  
+  // Populate minutes (00-59, step 5)
+  for (let m = 0; m < 60; m += 5) {
+    const option = document.createElement('option');
+    option.value = m;
+    option.textContent = String(m).padStart(2, '0');
+    timePickerMinute.appendChild(option);
+  }
+}
+
+function openTimePicker(inputEl, wrapperEl, clearBtnEl) {
+  timePickerCurrentInput = inputEl;
+  timePickerCurrentWrapper = wrapperEl;
+  timePickerCurrentClearBtn = clearBtnEl;
+
+  // Parse current value or use current time
+  const currentValue = inputEl.dataset.value;
+  if (currentValue) {
+    const [hour, minute] = currentValue.split(':');
+    let h = parseInt(hour, 10);
+    const m = Math.round(parseInt(minute, 10) / 5) * 5; // Round to nearest 5
+    
+    // Convert 24-hour to 12-hour
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    
+    timePickerHour.value = h;
+    timePickerMinute.value = m;
+    timePickerAmPm.value = ampm;
+  } else {
+    // Default to current time
+    const now = new Date();
+    let h = now.getHours();
+    const m = Math.round(now.getMinutes() / 5) * 5;
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    
+    timePickerHour.value = h;
+    timePickerMinute.value = m;
+    timePickerAmPm.value = ampm;
+  }
+
+  timePickerOverlay.classList.remove('hidden');
+  timePickerOverlay.setAttribute('aria-hidden', 'false');
+  
+  // Lock body scroll on mobile
+  document.body.classList.add('time-picker-open');
+}
+
+function closeTimePicker() {
+  timePickerOverlay.classList.add('hidden');
+  timePickerOverlay.setAttribute('aria-hidden', 'true');
+  timePickerCurrentInput = null;
+  timePickerCurrentWrapper = null;
+  timePickerCurrentClearBtn = null;
+  
+  // Unlock body scroll
+  document.body.classList.remove('time-picker-open');
+}
+
+function selectTime() {
+  let hour = parseInt(timePickerHour.value, 10);
+  const minute = parseInt(timePickerMinute.value, 10);
+  const ampm = timePickerAmPm.value;
+  
+  // Convert 12-hour to 24-hour
+  if (ampm === 'PM' && hour < 12) hour += 12;
+  if (ampm === 'AM' && hour === 12) hour = 0;
+  
+  const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+  const displayTime = formatTimeDisplay(timeStr);
+
+  if (timePickerCurrentInput) {
+    timePickerCurrentInput.value = displayTime;
+    timePickerCurrentInput.dataset.value = timeStr;
+  }
+
+  if (timePickerCurrentClearBtn) {
+    timePickerCurrentClearBtn.classList.remove('hidden');
+  }
+
+  closeTimePicker();
+}
+
+function clearTime(inputEl, clearBtnEl) {
+  inputEl.value = '';
+  inputEl.dataset.value = '';
+  clearBtnEl.classList.add('hidden');
+}
+
+// Event listeners for time picker
+timePickerClose.addEventListener('click', closeTimePicker);
+
+timePickerSet.addEventListener('click', selectTime);
+
+timePickerOverlay.addEventListener('click', (e) => {
+  if (e.target === timePickerOverlay) closeTimePicker();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !timePickerOverlay.classList.contains('hidden')) closeTimePicker();
+});
+
+// Initialize time picker buttons for all time inputs
+function initTimePickerButtons() {
+  const timeInputs = [
+    { input: dueTimeInput, wrapper: document.getElementById('dueTimeWrapper') },
+    { input: editReminderDueTimeInput, wrapper: document.getElementById('editReminderDueTimeWrapper') },
+  ];
+
+  timeInputs.forEach(({ input, wrapper }) => {
+    if (!input || !wrapper) return;
+
+    const btn = wrapper.querySelector('.time-picker-btn');
+    const clearBtn = wrapper.querySelector('.time-clear-btn');
+
+    if (btn) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openTimePicker(input, wrapper, clearBtn);
+      });
+    }
+
+    // Open picker when clicking the button
+    // Also handle manual typing - parse on blur
+    input.addEventListener('blur', () => {
+      const parsed = parseTimeInput(input.value);
+      if (parsed) {
+        input.dataset.value = parsed;
+        input.value = formatTimeDisplay(parsed);
+        if (clearBtn) clearBtn.classList.remove('hidden');
+      } else if (input.value.trim()) {
+        // Invalid input - clear it
+        input.value = '';
+        input.dataset.value = '';
+        if (clearBtn) clearBtn.classList.add('hidden');
+      }
+    });
+    
+    // Also open picker when clicking on the input (optional - can type manually instead)
+    input.addEventListener('click', () => {
+      // Only open picker if there's no value - otherwise let user edit
+      if (!input.dataset.value && !input.value) {
+        openTimePicker(input, wrapper, clearBtn);
+      }
+    });
+
+    // Clear button functionality
+    if (clearBtn) {
+      clearBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        clearTime(input, clearBtn);
+      });
+    }
+  });
+}
+
+initTimePicker();
+initTimePickerButtons();
