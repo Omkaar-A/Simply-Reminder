@@ -1325,43 +1325,6 @@ body.dark .date-picker-btn:active {
   background: rgba(162, 155, 254, 0.42);
 }
 
-/* Clear date button */
-.date-clear-btn {
-  position: absolute;
-  right: 36px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 107, 107, 0.15);
-  color: var(--red);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 600;
-  transition: background-color 0.2s, transform 0.2s;
-  z-index: 1;
-}
-
-.date-clear-btn:hover {
-  background: rgba(255, 107, 107, 0.3);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.date-clear-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--red);
-}
-
-.date-clear-btn.hidden {
-  display: none !important;
-}
-
 /* ===== TIME INPUT STYLES ===== */
 /* Custom time input wrapper for custom time picker button */
 .time-input-wrapper {
@@ -1443,43 +1406,6 @@ body.dark .time-picker-btn:hover {
 
 body.dark .time-picker-btn:active {
   background: rgba(162, 155, 254, 0.42);
-}
-
-/* Clear time button */
-.time-clear-btn {
-  position: absolute;
-  right: 36px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 107, 107, 0.15);
-  color: var(--red);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 600;
-  transition: background-color 0.2s, transform 0.2s;
-  z-index: 1;
-}
-
-.time-clear-btn:hover {
-  background: rgba(255, 107, 107, 0.3);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.time-clear-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px var(--red);
-}
-
-.time-clear-btn.hidden {
-  display: none !important;
 }
 
 /* ===== CUSTOM TIME PICKER ===== */
@@ -1949,13 +1875,6 @@ body.dark .date-picker-close:hover {
     height: 44px;
     right: 0;
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  }
-
-  .date-clear-btn {
-    width: 32px;
-    height: 32px;
-    right: 46px;
-    font-size: 0.8rem;
   }
 
   /* Date picker calendar mobile adjustments */
