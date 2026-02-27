@@ -1462,14 +1462,6 @@ function initDatePickerButtons() {
       });
     }
 
-    // Open picker when clicking the input (but allow manual typing too)
-    input.addEventListener('click', () => {
-      // Only open picker if no text or text looks like a date picker selection
-      if (!input.value.trim() || input.dataset.value) {
-        openDatePicker(input, wrapper, clearBtn);
-      }
-    });
-
     // Handle manual date input on blur
     input.addEventListener('blur', () => {
       handleManualDateInput(input, clearBtn);
@@ -1641,8 +1633,7 @@ function initTimePickerButtons() {
       });
     }
 
-    // Open picker when clicking the button
-    // Also handle manual typing - parse on blur
+    // Handle manual typing - parse on blur
     input.addEventListener('blur', () => {
       const parsed = parseTimeInput(input.value);
       if (parsed) {
@@ -1654,14 +1645,6 @@ function initTimePickerButtons() {
         input.value = '';
         input.dataset.value = '';
         if (clearBtn) clearBtn.classList.add('hidden');
-      }
-    });
-    
-    // Also open picker when clicking on the input (optional - can type manually instead)
-    input.addEventListener('click', () => {
-      // Only open picker if there's no value - otherwise let user edit
-      if (!input.dataset.value && !input.value) {
-        openTimePicker(input, wrapper, clearBtn);
       }
     });
 
