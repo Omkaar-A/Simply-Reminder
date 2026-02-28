@@ -10,9 +10,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://apis.google.com/js/api.js" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
   <div id="confetti-container"></div>
+
+  <!-- Birthday Message -->
+  <div id="birthdayMessage" style="display: none; font-size: 30px; color: #FF6B6B; text-align: center;">
+      🎉 HAPPY BIRTHDAY, <span id="birthdayName"></span>! 🎂
+  </div>
+
+  <!-- Birthday Song -->
+  <audio id="birthdaySong" src="https://www.soundjay.com/buttons/sounds/birthday-song-01.mp3" style="display: none;"></audio>
 
   <div class="app">
     <!-- Header -->
@@ -388,6 +397,25 @@
     </div>
   </div>
 
+  <script>
+    // Celebrate Birthday Function
+    function celebrateBirthday(name) {
+        // Show the birthday message
+        document.getElementById("birthdayName").textContent = name;
+        document.getElementById("birthdayMessage").style.display = "block";
+
+        // Play the birthday song
+        const song = document.getElementById("birthdaySong");
+        song.play();
+
+        // Show confetti!
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    }
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
