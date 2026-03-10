@@ -1,7 +1,7 @@
 /* ===== CONFIG ===== */
 // ⚠️ IMPORTANT: Replace this with your own Google Client ID!
 // Ask an adult to follow the setup guide in README.md
-const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = ' 4592892735-0maov548i7kr2b1njrq18n4c1le6nghd.apps.googleusercontent.com';
 
 /* ===== STORAGE ===== */
 const STORAGE_KEY = 'reminders-app';
