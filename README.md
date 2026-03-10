@@ -106,44 +106,6 @@ The app also has a fresh, colorful design: gradient backgrounds, colored stats, 
 
 - Click **Sign in with Google** to link your account. After signing in, reminders that have a **due date** can be added to your Google Calendar (the app can do this automatically when you add them, and you can open **📅 Calendar** on a reminder to add it manually).  
   Setup requires a Google Cloud project and Client ID — see **Google Calendar setup** below if an adult is helping you.
-
----
-
-## Google Calendar setup (needs an adult)
-
-To make “Sign in with Google” and calendar sync work, an adult needs to create a Google Cloud project and add the Client ID to the app.
-
-### Step 1 — Create a Google Cloud project
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com).
-2. Sign in with a Google account.
-3. Click **Select a project** → **New Project**.
-4. Name it (e.g. “Simply Reminder”) and click **Create**.
-
-### Step 2 — Enable the Calendar API
-
-1. In the left menu: **APIs & Services** → **Library**.
-2. Search for **Google Calendar API**, open it, and click **Enable**.
-
-### Step 3 — Create credentials
-
-1. Go to **APIs & Services** → **Credentials**.
-2. Click **Create Credentials** → **OAuth client ID**.
-3. If asked, configure the **OAuth consent screen** first (e.g. **External**, add app name).
-4. For **Application type**, choose **Web application**.
-5. Under **Authorized JavaScript origins**, add your GitHub Pages URL (e.g. `https://yourusername.github.io/reminders-app/`). See **Host on GitHub Pages** above for how to get this URL.
-6. Click **Create**, then copy the **Client ID** (e.g. `123456789-abc.apps.googleusercontent.com`).
-
-### Step 4 — Add the Client ID to the app
-
-1. Open **app.js** in the reminders-app folder.
-2. Find the line:  
-   `const GOOGLE_CLIENT_ID = 'YOUR_CLIENT_ID_HERE.apps.googleusercontent.com';`
-3. Replace `YOUR_CLIENT_ID_HERE.apps.googleusercontent.com` with the Client ID you copied (keep the quotes).
-4. Save the file.
-
-After that, the **Sign in with Google** button in the app will work. If you host on GitHub Pages, use the exact URL from **Host on GitHub Pages** in Authorized JavaScript origins.
-
 ---
 
 ## Summary
@@ -162,3 +124,4 @@ After that, the **Sign in with Google** button in the app will work. If you host
 | Google Calendar   | Sign in with Google (after Client ID is set in app.js) |
 
 Enjoy your reminders!
+
