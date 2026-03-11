@@ -1,8 +1,6 @@
 # 📅 Simply Reminder
 **Simply Reminder** is a lightweight, secure web application that syncs your tasks directly to your **Google Calendar**. Keep your schedule organized without ever leaving your browser.
 
-![GitHub Pages](https://img.shields.io)
-![Google API](https://img.shields.io)
 
 ## 🚀 Features
 - **One-Tap Login:** Securely authenticate with your Google account.
@@ -32,3 +30,4 @@ This app is currently in **Production (Unverified)**. If you see a "Google hasn'
 
 ---
 *Built with ❤️ by [Your Son's Username]*
+
