@@ -20,7 +20,7 @@ This application is a **Static Web App** hosted on GitHub Pages.
 - **Secure Authentication:** We use the official [Google Identity Services](https://developers.google.com) for login.
 - **Limited Access:** We only ask for the `calendar.events` permission to manage the reminders you create.
 
-View our full [Privacy Policy](privacy.html) here.
+View our full [Privacy Policy](Privacy.html) here.
 
 ## ⚠️ Developer Note
 This app is currently in **Production (Unverified)**. If you see a "Google hasn't verified this app" warning:
@@ -30,6 +30,7 @@ This app is currently in **Production (Unverified)**. If you see a "Google hasn'
 
 ---
 *Built with ❤️ by Omkaar-A*
+
 
 
 
