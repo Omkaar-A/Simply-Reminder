@@ -29,6 +29,7 @@ This app is currently in **Production (Unverified)**. If you see a "Google hasn'
 *This warning exists because the app is undergoing Google's security review process.*
 
 ---
-*Built with ❤️ by [Omkaar-A]*
+*Built with ❤️ by Omkaar-A*
+
 
 
